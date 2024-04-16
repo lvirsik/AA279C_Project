@@ -4,6 +4,7 @@ from Simulator.simulationConstants import *
 from Simulator.dynamics import *
 from Graphics.visualizeOrbits import *
 from Graphics.visualizeRotations import *
+from Graphics.visualizeEllipsoids import *
 
 # Setup Simulation (Orbit)
 initial_cartesian_state = OE_2_ECI(INITIAL_OEs)
