@@ -35,61 +35,44 @@ def plot_w_Energy_Momentum(init_c):
 
     # Get rid of 0.5 on right side and have 2 on left side 2T = 1/2 * I * w^2 
     KE = np.dot(w, np.dot(I_COM_BF, w))
-    print(KE)
+
+    L = np.dot(I_COM_BF, w)
+    L_sqr = np.dot(L, np.transpose(L))
+    L_mag = pow(L_sqr, 0.5)
 
     # Ellipsoid axis
-    a = pow((KE / I_x), 0.5)
-    b = pow((KE / I_y), 0.5)
-    c = pow((KE / I_z), 0.5)
-    print(a)
+    a_T = pow((KE / I_x), 0.5)
+    b_T = pow((KE / I_y), 0.5)
+    c_T = pow((KE / I_z), 0.5)
+
+    # Ellipsoid axis
+    a_L = L_mag / I_x
+    b_L = L_mag / I_y
+    c_L = L_mag / I_z
 
     # Plotting ellipsoid using spherical coordinates
-    ellipsoid_phi = np.linspace(0,2*np.pi, 256).reshape(256, 1)
-    ellipsoid_theta = np.linspace(0, np.pi, 256).reshape(-1, 256)
-    x = a*np.sin(ellipsoid_theta)*np.cos(ellipsoid_phi)
-    y = b*np.sin(ellipsoid_theta)*np.sin(ellipsoid_phi)
-    z = c*np.cos(ellipsoid_theta)
+    ellipsoid_phi_T = np.linspace(0,2*np.pi, 256).reshape(256, 1)
+    ellipsoid_theta_T = np.linspace(0, np.pi, 256).reshape(-1, 256)
+    x_T = a_T * np.sin(ellipsoid_theta_T)*np.cos(ellipsoid_phi_T)
+    y_T = b_T * np.sin(ellipsoid_theta_T)*np.sin(ellipsoid_phi_T)
+    z_T = c_T * np.cos(ellipsoid_theta_T)
+
+    # Plotting ellipsoid using spherical coordinates
+    ellipsoid_phi_L = np.linspace(0, 2 * np.pi, 256).reshape(256, 1)
+    ellipsoid_theta_L = np.linspace(0, np.pi, 256).reshape(-1, 256)
+    x_L = a_L* np.sin(ellipsoid_theta_L) * np.cos(ellipsoid_phi_L)
+    y_L = b_L * np.sin(ellipsoid_theta_L) * np.sin(ellipsoid_phi_L)
+    z_L = c_L * np.cos(ellipsoid_theta_L)
 
     # Plot trajectory in 3D
     fig = plt.figure(1)
     ax = fig.add_subplot(111, projection='3d')
-    print("before1")
-    ax.plot_surface(x, y, z)
-    print("before2")
-    plt.show()
-    print("after")
-
-# Plot the possible trajectory the angular velocity can trace with the constraint of being compatible with the magnitude of Angular Momentum
-def plot_w_Momentum(init_c):
-    w = init_c[6:9]
-
-    I_x = I_COM_BF[0,0]
-    I_y = I_COM_BF[1,1]
-    I_z = I_COM_BF[2,2]
-
-    # Get rid of 0.5 on right side and have 2 on left side 2T = 1/2 * I * w^2 
-    L = np.dot(I_COM_BF, w)
-    # L_sqr = pow(L, 2)
-    print(L)
-
-    # Ellipsoid axis
-    a = L / I_x
-    b = L / I_y
-    c = L / I_z
-    print(a)
-
-    # Plotting ellipsoid using spherical coordinates
-    ellipsoid_phi = np.linspace(0,2*np.pi, 256).reshape(256, 1)
-    ellipsoid_theta = np.linspace(0, np.pi, 256).reshape(-1, 256)
-    x = a*np.sin(ellipsoid_theta)*np.cos(ellipsoid_phi)
-    y = b*np.sin(ellipsoid_theta)*np.sin(ellipsoid_phi)
-    z = c*np.cos(ellipsoid_theta)
+    ax.plot_surface(x_T, y_T, z_T)
 
     # Plot trajectory in 3D
     fig = plt.figure(2)
     ax = fig.add_subplot(111, projection='3d')
-    ax.plot_surface(x, y, z)
-    plt.show()
+    ax.plot_surface(x_L, y_L, z_L)
 
 # Plot the possible trajectory the angular velocity that is within both the energy ellipsoid and the momentum ellipsoid, a bolhode.
-#def plot_polHode(trajectory):
+# def plot_polHode(trajectory):

@@ -15,7 +15,5 @@ sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 # Run Simulation
 trajectory = sim.propogate()
 # plot_orbit(trajectory)
-print("1")
 plot_w_Energy_Momentum(initial_state)
-print("2")
-plot_w_Momentum(initial_state)
+plt.show()
