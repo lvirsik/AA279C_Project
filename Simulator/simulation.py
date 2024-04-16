@@ -60,5 +60,5 @@ class Simulation:
                 self.current_step += 1
             self.previous_time = t
         
-        self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics()))
+        self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, self.ts)))
         return self.statedot_previous

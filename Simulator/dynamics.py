@@ -44,5 +44,13 @@ def orbital_dynamics(ECI):
     
     return statedot
 
-def rotational_dynamics():
-    return np.array([0,0,0,0,0,0])
+def rotational_dynamics(state, satellite, dt):
+    w = state[9:12]
+    torque = np.array([0,0,0])
+    I_dot = (satellite.I - satellite.I_prev) / dt
+    alphas = np.dot(np.linalg.inv(satellite.I), torque - np.cross(w, np.dot(satellite.I, w)) - np.dot(I_dot, w))
+    
+    statedot = np.zeros((6))
+    statedot[0:3] = w
+    statedot[3:6] = alphas
+    return statedot
