@@ -3,7 +3,7 @@ from Simulator.simulationConstants import *
 
 def OE_2_ECI(oes):
     """ Convert orbital elements to Cartesian in ECI """
-    mu = MU_EARTH
+    mu = MU_JUPITER
     a = oes[0]
     e = oes[1]
     i = oes[2]
@@ -35,7 +35,7 @@ def orbital_dynamics(ECI):
     rECI = ECI[0:3]
     vECI = ECI[3:6]
     
-    mu = MU_EARTH
+    mu = MU_JUPITER
     r = np.linalg.norm(rECI)
 
     statedot = np.zeros((6))
