@@ -15,6 +15,6 @@ sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 # Run Simulation
 trajectory = sim.propogate()
 plot_orbit(trajectory)
-test = plot_w_Energy_Momentum(initial_state)
+plot_w_Energy_Momentum(initial_state)
 plot_polHode(initial_state, trajectory)
 plt.show()
