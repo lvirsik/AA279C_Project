@@ -13,7 +13,8 @@ initial_state = np.concatenate((initial_cartesian_state, initial_rotational_stat
 sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 
 # Run Simulation
-trajectory = sim.propogate()
+# trajectory = sim.propogate()
 # plot_orbit(trajectory)
-plot_w_Energy_Momentum(initial_state)
+test = plot_w_Energy_Momentum(initial_state)
+plot_polHode(initial_state)
 plt.show()

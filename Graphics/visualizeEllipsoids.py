@@ -51,18 +51,18 @@ def plot_w_Energy_Momentum(init_c):
     c_L = L_mag / I_z
 
     # Plotting ellipsoid using spherical coordinates
-    ellipsoid_phi_T = np.linspace(0,2*np.pi, 256).reshape(256, 1)
-    ellipsoid_theta_T = np.linspace(0, np.pi, 256).reshape(-1, 256)
-    x_T = a_T * np.sin(ellipsoid_theta_T)*np.cos(ellipsoid_phi_T)
-    y_T = b_T * np.sin(ellipsoid_theta_T)*np.sin(ellipsoid_phi_T)
-    z_T = c_T * np.cos(ellipsoid_theta_T)
+    ellipsoid_phi_T = np.linspace(0, 2 * np.pi, 5)
+    ellipsoid_theta_T = np.linspace(0, np.pi, 5)
+    x_T = a_T * np.outer(np.sin(ellipsoid_theta_T), np.cos(ellipsoid_phi_T))
+    y_T = b_T * np.outer(np.sin(ellipsoid_theta_T), np.sin(ellipsoid_phi_T))
+    z_T = c_T * np.outer(np.ones_like(ellipsoid_theta_T), np.cos(ellipsoid_theta_T))
 
     # Plotting ellipsoid using spherical coordinates
-    ellipsoid_phi_L = np.linspace(0, 2 * np.pi, 256).reshape(256, 1)
-    ellipsoid_theta_L = np.linspace(0, np.pi, 256).reshape(-1, 256)
-    x_L = a_L* np.sin(ellipsoid_theta_L) * np.cos(ellipsoid_phi_L)
-    y_L = b_L * np.sin(ellipsoid_theta_L) * np.sin(ellipsoid_phi_L)
-    z_L = c_L * np.cos(ellipsoid_theta_L)
+    ellipsoid_phi_L = np.linspace(0, 2 * np.pi, 5)
+    ellipsoid_theta_L = np.linspace(0, np.pi, 5)
+    x_L = a_L * np.outer(np.sin(ellipsoid_theta_L), np.cos(ellipsoid_phi_L))
+    y_L = b_L * np.outer(np.sin(ellipsoid_theta_L), np.sin(ellipsoid_phi_L))
+    z_L = c_L * np.outer(np.ones_like(ellipsoid_theta_L), np.cos(ellipsoid_theta_L))
 
     # Plot trajectory in 3D
     fig = plt.figure(1)
@@ -74,5 +74,33 @@ def plot_w_Energy_Momentum(init_c):
     ax = fig.add_subplot(111, projection='3d')
     ax.plot_surface(x_L, y_L, z_L)
 
+    # 256 x 256 arrays 
+    return [x_T, y_T, z_T, x_L, y_L, z_L]
+
 # Plot the possible trajectory the angular velocity that is within both the energy ellipsoid and the momentum ellipsoid, a bolhode.
-# def plot_polHode(trajectory):
+def plot_polHode(init_c):
+    ellipsoids = plot_w_Energy_Momentum(init_c)
+    energy = ellipsoids[0:3]
+    momentum = ellipsoids[3:6]
+
+    size = np.shape(energy)
+    output_energy = np.stack((energy[0], energy[1], energy[2]), axis = -1)
+    output_momentum = np.stack((momentum[0], momentum[1], momentum[2]), axis = -1)
+    print(output_energy)
+
+    intersection = np.zeros((1,3))
+    # This O(n^2) to compare, can be much faster
+    for n in range(size[0]):
+        for m in range(size[1]):
+            coord_e = output_energy[n][m]
+            print(coord_e)
+            #if coord_e.all() == coord_m.all():
+                # print("Ener: " + str(coord_e))
+             #   intersection = np.append(intersection, coord_m, axis = 0)
+
+    # print(intersection)
+
+    # Plot trajectory in 3D
+    fig = plt.figure(3)
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(intersection[0], intersection[1], intersection[2])
