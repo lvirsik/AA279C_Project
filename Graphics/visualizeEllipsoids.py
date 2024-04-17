@@ -41,9 +41,9 @@ def plot_w_Energy_Momentum(init_c):
     L_mag = pow(L_sqr, 0.5)
 
     # Ellipsoid axis
-    a_T = pow((T / I_x), 0.5)
-    b_T = pow((T / I_y), 0.5)
-    c_T = pow((T / I_z), 0.5)
+    a_T = pow((T * 5 / I_x), 0.5)
+    b_T = pow((T * 5 / I_y), 0.5)
+    c_T = pow((T * 5 / I_z), 0.5)
 
     # Ellipsoid axis
     a_L = L_mag / I_x
@@ -102,6 +102,7 @@ def plot_polHode(init_c, trajectory):
     ax.plot_surface(w_x, w_y, w_z)
 
     """
+    # This code was wip to analytically plot intersection of the ellipsoid but we realzed we just need to plot the ang vel vector over time
     KE, L = plot_w_Energy_Momentum(init_c)
     
     I_x = I_COM_BF[0,0]
@@ -148,6 +149,7 @@ def plot_polHode(init_c, trajectory):
     """
 
     """
+    # This code was a brute force effort, comparing the coordinates of each ellipsoid to see if any were equivalent
     output_energy = np.stack((energy[0], energy[1], energy[2]), axis = -1)
     output_momentum = np.stack((momentum[0], momentum[1], momentum[2]), axis = -1)
 
