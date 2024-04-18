@@ -40,21 +40,21 @@ def get_w_from_EulerAngle(trajectory):
     return w
 
 # Plot the possible trajectory the angular velocity can trace with the constraint of being compatible with the energy content and magnitude of the anguler momentum
-def plot_w_Energy_Momentum(init_c):
+def plot_w_Energy_Momentum(init_c, satellite):
     w = get_w_from_EulerAngle(init_c)
     # print(w)
 
-    I_x = I_COM_BF[0,0] 
-    I_y = I_COM_BF[1,1]
-    I_z = I_COM_BF[2,2]
+    I_x = satellite.I_principle[0,0] 
+    I_y = satellite.I_principle[1,1]
+    I_z = satellite.I_principle[2,2]
 
     # Calculate magnitude of anguler momentum
-    L = np.dot(I_COM_BF, w)
+    L = np.dot(satellite.I_principle, w)
     L_sqr = np.dot(L.transpose(), L)
     L_mag = pow(L_sqr, 0.5)
 
     # Calculate the kinetic energy times 2
-    T = np.dot(w.transpose(), L)
+    T = 0.5 * np.dot(w.transpose(), L)
 
     # Momentum ellipsoid axis coefficients
     a_L = L_mag / I_x
@@ -95,7 +95,7 @@ def plot_w_Energy_Momentum(init_c):
     return [T, L_mag]
 
 # Plot the possible trajectory the angular velocity that is within both the energy ellipsoid and the momentum ellipsoid, a bolhode.
-def plot_polHode(init_c, trajectory):
+def plot_polHode(init_c, trajectory, satellite):
     w = get_w_from_EulerAngle(trajectory)
     w_x = w[0][0][0:100] # if I use all 10000 points the polhode graph is a mess
     w_y = w[1][0][0:100]
@@ -117,9 +117,9 @@ def plot_polHode(init_c, trajectory):
     # 2D plots
     T, L_mag = plot_w_Energy_Momentum(init_c)
 
-    I_x = I_COM_BF[0,0]
-    I_y = I_COM_BF[1,1]
-    I_z = I_COM_BF[2,2]
+    I_x = satellite.I_principle[0,0]
+    I_y = satellite.I_principle[1,1]
+    I_z = satellite.I_principle[2,2]
 
     eqn1 = pow(L_mag, 2) - 2 * T * I_x
     eqn2 = pow(L_mag, 2) - 2 * T * I_y
