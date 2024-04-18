@@ -17,8 +17,9 @@ initial_cartesian_state = OE_2_ECI(INITIAL_OEs)
 # plot_orbit(trajectory)
 
 # Setup Simulation (Rotations)
-initial_rotational_state_rotations = np.array([0, 0, 0, 0.1, 0.1, 2])
+initial_rotational_state_rotations = np.array([0.1, 0.1, 0.1, 0.5, 0.5, 2])
 initial_state_rotations = np.concatenate((initial_cartesian_state, initial_rotational_state_rotations))
+initial_state_rotations[9:12] = get_w_from_EulerAngle(initial_state_rotations).T[0]
 sim_rotations = Simulation(60, 0.1, initial_state_rotations)
 
 # Run Simulation (Rotations)

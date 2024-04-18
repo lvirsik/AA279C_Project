@@ -6,6 +6,17 @@ from matplotlib.image import imread
 from Simulator.simulationConstants import *
 from Vehicle.satelliteConstants import *
 
+def get_EulerAngle_from_w(w, state):
+    phi = state[6]
+    theta = state[7]
+    psi = state[8]
+    
+    phidot = (w[0]*np.sin(psi) + w[1]*np.cos(psi))/np.sin(theta)
+    thetadot = w[0]*np.cos(psi) - w[1]*np.sin(psi)
+    psidot = w[2] - (w[0]*np.sin(psi) + w[1]*np.cos(psi))*(1/np.tan(theta))
+    
+    return [phidot, thetadot, psidot]
+
 def get_w_from_EulerAngle(trajectory):
      # 1 2 3 = phi theta psi = yaw pitch roll
     if (np.size(trajectory) == (12)): 
@@ -42,7 +53,6 @@ def get_w_from_EulerAngle(trajectory):
 # Plot the possible trajectory the angular velocity can trace with the constraint of being compatible with the energy content and magnitude of the anguler momentum
 def plot_w_Energy_Momentum(init_c, I_principle):
     w = get_w_from_EulerAngle(init_c)
-    # print(w)
 
     I_x = I_principle[0,0] 
     I_y = I_principle[1,1]
@@ -96,13 +106,9 @@ def plot_w_Energy_Momentum(init_c, I_principle):
 
 # Plot the possible trajectory the angular velocity that is within both the energy ellipsoid and the momentum ellipsoid, a bolhode.
 def plot_polHode(init_c, trajectory, I_principle):
-    w = get_w_from_EulerAngle(trajectory)
-    w_x = w[0][0][0:100] # if I use all 10000 points the polhode graph is a mess
-    w_y = w[1][0][0:100]
-    w_z = w[2][0][0:100]
-    # print(np.shape(w))
-    # print(w)
-    # print(w_x)
+    w_x = trajectory[:,9] # if I use all 10000 points the polhode graph is a mess
+    w_y = trajectory[:,10]
+    w_z = trajectory[:,11]
     
     # Plot trajectory in 3D
     fig = plt.figure(3)
