@@ -66,6 +66,8 @@ def plot_w_Energy_Momentum(init_c):
     b_T = pow((T / I_y), 0.5)
     c_T = pow((T / I_z), 0.5)
 
+    print(L_mag**2/(2*T))
+
     # Spherical coordinates 
     phi = np.linspace(0, 2 * np.pi, 256)
     theta = np.linspace(0, np.pi, 256)
@@ -83,14 +85,6 @@ def plot_w_Energy_Momentum(init_c):
     fig = plt.figure(1)
     ax = fig.add_subplot(projection='3d')
     ax.plot_surface(x_T, y_T, z_T, color = 'r')
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    ax.set_title("energy ellipsoid")
-
-
-    fig = plt.figure(2)
-    ax = fig.add_subplot(projection='3d')
     ax.plot_surface(x_L, y_L, z_L)
     ax.set_xlabel('x')
     ax.set_ylabel('y')
