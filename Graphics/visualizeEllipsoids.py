@@ -54,7 +54,7 @@ def plot_w_Energy_Momentum(init_c):
     L_mag = pow(L_sqr, 0.5)
 
     # Calculate the kinetic energy times 2
-    T = np.dot(w.transpose(), L)
+    T = 0.5 * np.dot(w.transpose(), L)
 
     # Momentum ellipsoid axis coefficients
     a_L = L_mag / I_x
@@ -66,7 +66,7 @@ def plot_w_Energy_Momentum(init_c):
     b_T = pow((T / I_y), 0.5)
     c_T = pow((T / I_z), 0.5)
 
-    print(L_mag**2/(2*T))
+    print(L_mag**2 / (2*T))
 
     # Spherical coordinates 
     phi = np.linspace(0, 2 * np.pi, 256)
@@ -97,12 +97,12 @@ def plot_w_Energy_Momentum(init_c):
 # Plot the possible trajectory the angular velocity that is within both the energy ellipsoid and the momentum ellipsoid, a bolhode.
 def plot_polHode(init_c, trajectory):
     w = get_w_from_EulerAngle(trajectory)
-    w_x = w[0][0][0:100] # if I use all 10000 points the polhode graph is a mess
-    w_y = w[1][0][0:100]
-    w_z = w[2][0][0:100]
-    print(np.shape(w))
-    print(w)
-    print(w_x)
+    w_x = w[0][0] # if I use all 10000 points the polhode graph is a mess
+    w_y = w[1][0]
+    w_z = w[2][0]
+    # print(np.shape(w))
+    # print(w)
+    # print(w_x)
     
     # Plot trajectory in 3D
     fig = plt.figure(3)
