@@ -24,7 +24,7 @@ sim_rotations = Simulation(60, 0.1, initial_state_rotations)
 # Run Simulation (Rotations)
 trajectory = sim_rotations.propogate()
 plot_euler(trajectory)
-
-plot_w_Energy_Momentum(initial_state_rotations)
-plot_polHode(initial_state_rotations, trajectory)
+I_prin = sim_rotations.satellite.I_principle
+plot_w_Energy_Momentum(initial_state_rotations, I_prin)
+plot_polHode(initial_state_rotations, trajectory, I_prin)
 plt.show()
