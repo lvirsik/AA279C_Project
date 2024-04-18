@@ -18,15 +18,3 @@ class Satellite:
         I_prinicple = np.diag(value)
         R = vector
         return I_prinicple, R
-    
-    def get_EulerAngle_from_w(w, state):
-        phi = state[6]
-        theta = state[7]
-        psi = state[8]
-        
-        phidot = (w[0]*np.sin(psi) + w[1]*np.cos(psi))/np.sin(theta)
-        thetadot = w[0]*np.cos(psi) - w[1]*np.sin(psi)
-        psidot = w[2] - (w[0]*np.sin(psi) + w[1]*np.cos(psi))*(1/np.tan(theta))
-        
-        return [phidot, thetadot, psidot]
-        
