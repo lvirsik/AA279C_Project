@@ -11,6 +11,7 @@ class Satellite:
         
         # Initialize the satellite's rotation matrix
         self.I_principle, self.R = self.calculate_R()
+        self.I_principle_prev = self.I_principle
         
     def calculate_R(self):
         value, vector = np.linalg.eig(self.I)
