@@ -33,8 +33,6 @@ def plot_w_Energy_Momentum(init_c, I_principle):
     b_T = pow((T / I_y), 0.5)
     c_T = pow((T / I_z), 0.5)
 
-    print(L_mag**2 / (2*T))
-
     # Spherical coordinates 
     phi = np.linspace(0, 2 * np.pi, 256)
     theta = np.linspace(0, np.pi, 256)
