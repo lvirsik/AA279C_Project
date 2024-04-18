@@ -33,8 +33,8 @@ def get_w_from_EulerAngle(trajectory):
         psiDot = euler_angle_rates[:, 2]
 
     # Angular velocity from euler angles and euler angles rates
-    w = np.array([[phiDot * np.sin(theta) * np.sin(phiDot) + thetaDot * np.cos(psi)],
-                  [phiDot * np.sin(theta) * np.cos(phiDot) + thetaDot * np.sin(psi)],
+    w = np.array([[phiDot * np.sin(theta) * np.sin(psi) + thetaDot * np.cos(psi)],
+                  [phiDot * np.sin(theta) * np.cos(psi) - thetaDot * np.sin(psi)],
                   [phiDot * np.cos(theta) + psiDot]])
     
     return w
