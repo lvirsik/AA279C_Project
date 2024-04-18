@@ -8,24 +8,19 @@ from Graphics.visualizeEllipsoids import *
 
 # Setup Simulation (Orbit)
 initial_cartesian_state = OE_2_ECI(INITIAL_OEs)
-# initial_rotational_state_orbit = np.array([0, 0, 0, 0, 0, 0])
-# initial_state_orbit = np.concatenate((initial_cartesian_state, initial_rotational_state_orbit))
-# sim_orbit = Simulation(FINAL_TIME, TIMESTEP, initial_state_orbit)
-
-# Run Simulation (Orbit)
-# trajectory = sim_orbit.propogate()
-# plot_orbit(trajectory)
 
 # Setup Simulation (Rotations)
-initial_rotational_state_rotations = np.array([0.1, 0.1, 0.1, 0.5, 0.5, 2])
-initial_state_rotations = np.concatenate((initial_cartesian_state, initial_rotational_state_rotations))
-initial_state_rotations[9:12] = get_w_from_EulerAngle(initial_state_rotations).T[0]
-sim_rotations = Simulation(60, 0.1, initial_state_rotations)
+initial_EAs = INITIAL_EAs[0:3]
+initial_Omega = get_w_from_EulerAngle(INITIAL_EAs).T[0]
+
+# Combine and set up sim
+initial_state = np.concatenate((initial_cartesian_state, initial_EAs, initial_Omega))
+sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 
 # Run Simulation (Rotations)
-trajectory = sim_rotations.propogate()
+trajectory = sim.propogate()
+
+# Plots
 plot_euler(trajectory)
-I_prin = sim_rotations.satellite.I_principle
-plot_w_Energy_Momentum(initial_state_rotations, I_prin)
-plot_polHode(initial_state_rotations, trajectory, I_prin)
-plt.show()
+plot_w_Energy_Momentum(initial_state, sim.satellite.I_principle)
+plot_polHode(initial_state, trajectory, sim.satellite.I_principle)
