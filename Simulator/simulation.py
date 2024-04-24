@@ -45,7 +45,7 @@ class Simulation:
         # Create t vector from 0 to tf with timestep ts
         t_span = np.linspace(0, int(tf/ts)*ts, num=int(tf/ts)+1)
         t = (0,self.tf)
-
+        
         solution = scipy.integrate.solve_ivp(self.wrapper_state_to_stateDot, t, state, 
                                              args=(self.satellite, t_span), t_eval=t_span, max_step=ts/5)
         state_history = solution['y'].T

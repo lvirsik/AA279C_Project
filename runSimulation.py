@@ -10,11 +10,11 @@ from Graphics.visualizeEllipsoids import *
 initial_cartesian_state = OE_2_ECI(INITIAL_OEs)
 
 # Setup Simulation (Rotations)
-initial_EAs = INITIAL_EAs[0:3]
-initial_Omega = get_w_from_EulerAngle(INITIAL_EAs).T[0]
+initial_Q = normalize_vector(INITIAL_Q[0:4])
+initial_w = INITIAL_w[0:3]
 
 # Combine and set up sim
-initial_state = np.concatenate((initial_cartesian_state, initial_EAs, initial_Omega))
+initial_state = np.concatenate((initial_cartesian_state, initial_Q, initial_w))
 sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 
 # Run Simulation (Rotations)
