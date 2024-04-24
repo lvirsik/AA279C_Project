@@ -1,5 +1,7 @@
 import numpy as np
+import math
 from Simulator.simulationConstants import *
+from scipy.spatial.transform import Rotation
 
 def get_w_from_EulerAngle(trajectory):
      # 1 2 3 = phi theta psi = yaw pitch roll
@@ -51,6 +53,67 @@ def get_EulerAngle_from_w(w, state):
     psidot = w[2] - (w[0]*np.sin(psi) + w[1]*np.cos(psi))*(1/np.tan(theta))
     
     return [phidot, thetadot, psidot]
+
+def normalize_vector(vector):
+    # Compute the length of the vector
+    length = math.sqrt(sum(component**2 for component in vector))
+    
+    # Normalize each component
+    normalized_vector = [component / length for component in vector]
+    
+    return normalized_vector
+
+def q2R(q):
+    qX = q[0]
+    qY = q[1]
+    qZ = q[2]
+    qW = q[3]
+
+    sqX = qX * qX
+    sqY = qY * qY
+    sqZ = qZ * qZ
+    sqW = qW * qW
+
+    m00 = sqX - sqY - sqZ + sqW
+    m11 = -sqX + sqY - sqZ + sqW
+    m22 = -sqX - sqY + sqZ + sqW 
+
+    qXqY = qX * qY
+    qZqW = qZ * qW
+    m10 = 2 * (qXqY + qZqW)
+    m01 = 2 * (qXqY - qZqW)
+
+    qXqZ = qX * qZ
+    qYqW = qY * qW
+    m20 = 2 * (qXqZ - qYqW)
+    m02 = 2 * (qXqZ + qYqW)
+
+    qYqZ = qY * qZ
+    qXqW = qX * qW
+    m21 = 2 * (qYqZ + qXqW)
+    m12 = 2 * (qYqZ - qXqW)
+
+    R = np.array([[m00, m01, m02],
+                  [m10, m11, m12],
+                  [m20, m21, m22]])
+    
+    return R
+
+def R2EAs(R):
+    sy = math.sqrt(R[0,0]*R[0,0] + R[1,0]*R[1,0])
+    
+    singular = abs(sy) < 1e-6
+ 
+    if not singular:
+        x = math.atan2(R[2,1] , R[2,2])
+        y = math.atan2(-R[2,0], sy)
+        z = math.atan2(R[1,0], R[0,0])
+    else:
+        x = math.atan2(-R[1,2], R[1,1])
+        y = math.atan2(-R[2,0], sy)
+        z = 0
+ 
+    return np.array([x, y, z])
 
 def OE_2_ECI(oes):
     """ Convert orbital elements to Cartesian in ECI """
