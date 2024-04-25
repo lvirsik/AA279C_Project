@@ -23,6 +23,9 @@ class Simulation:
         self.tf = timefinal
         self.previous_time = 0
         self.current_step = 0
+        
+        self.L_inertial = calculate_L_Inertial(self.satellite, self.state)
+        self.w_inertial_history = np.array([calculate_w_inertial(self.satellite, self.state)[0:3]])
 
     def propogate(self):
         """ Simple propogator
@@ -59,6 +62,20 @@ class Simulation:
             if not t == t_vec[-1]:
                 self.current_step += 1
             self.previous_time = t
+            
+        # Run Checks on accuracy of situation and physical constraints
+        self.checks()
+
+        # create w history array
+        self.w_inertial_history = np.vstack((self.w_inertial_history, calculate_w_inertial(self.satellite, state)[0:3]))
         
         self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, self.ts)))
+        self.state = state
         return self.statedot_previous
+    
+    def checks(self):
+        tol = 0.0001
+        if (abs(self.L_inertial - calculate_L_Inertial(self.satellite, self.state)) >= tol).all():
+            print(calculate_L_Inertial(self.satellite, self.state))
+            raise ValueError('PYSICAL LAW VIOLATED: L_INERTIAL CHANGING OVER TIME.')
+        
