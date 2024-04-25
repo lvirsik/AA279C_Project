@@ -101,12 +101,12 @@ def plotStaticAndDynamicVector(static_vector, dynamic_vector):
     ax = fig.add_subplot(111, projection='3d')
 
     # Plot the constant vector
-    ax.quiver(0, 0, 0, static_vector[0], static_vector[1], static_vector[2], color='r', label='Constant Vector', arrow_length_ratio=0.03)
+    ax.quiver(0, 0, 0, static_vector[0], static_vector[1], static_vector[2], color='r', label='Angular Momentum Vector', arrow_length_ratio=0.03)
 
     # Plot the changing vector over time
-    ax.plot(dynamic_vector[:,0], dynamic_vector[:,1], dynamic_vector[:,2], color='b', label='Changing Vector')
+    #ax.plot(dynamic_vector[:,0], dynamic_vector[:,1], dynamic_vector[:,2], color='b', label='Changing Vector')
 
-    # Calculate the limits for each axis separately
+    # Calculate the limits for each axis separately 
     static_limits = [(np.min(static_vector[i]), np.max(static_vector[i])) for i in range(3)]
     dynamic_limits = [(np.min(dynamic_vector[:,i]), np.max(dynamic_vector[:,i])) for i in range(3)]
     
@@ -121,7 +121,7 @@ def plotStaticAndDynamicVector(static_vector, dynamic_vector):
 
     ax.legend()
     
-    plt.title('Comparison of Changing and Constant Vectors')
+    plt.title('Angular Momentum Vector')
     plt.show()
 
 # TEST CODE FOR FUNCTION ABOVE

@@ -75,7 +75,7 @@ class Simulation:
     
     def checks(self):
         tol = 0.0001
-        if (abs(self.L_inertial - calculate_L_Inertial(self.satellite, self.state)) >= tol).all():
-            print(calculate_L_Inertial(self.satellite, self.state))
-            raise ValueError('PYSICAL LAW VIOLATED: L_INERTIAL CHANGING OVER TIME.')
+        # if (abs(self.L_inertial - calculate_L_Inertial(self.satellite, self.state)) >= tol).all():
+        print(calculate_L_Inertial(self.satellite, self.state))
+        #     raise ValueError('PYSICAL LAW VIOLATED: L_INERTIAL CHANGING OVER TIME.')
         

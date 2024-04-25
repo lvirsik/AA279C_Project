@@ -47,11 +47,10 @@ def calculate_L_Inertial(satellite, state):
     w = state[10:13]
     I_principle = satellite.I_principle
     L_principle_axis = np.dot(I_principle, w)
-    
+    print(L_principle_axis)
     # Rotate into inertial frame
     q = state[6:10]
     R = q2R(q)
-    print(R)
     L_inertial = np.dot(R, L_principle_axis)
     return L_inertial
        
