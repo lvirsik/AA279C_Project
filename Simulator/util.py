@@ -47,7 +47,7 @@ def calculate_L_Inertial(satellite, state):
     w = state[10:13]
     I_principle = satellite.I_principle
     L_principle_axis = np.dot(I_principle, w)
-    print(L_principle_axis)
+    #print(L_principle_axis)
     # Rotate into inertial frame
     q = state[6:10]
     R = q2R(q)
@@ -62,6 +62,15 @@ def calculate_w_inertial(satellite, state):
     w_inertial = np.dot(R, w)
     return w_inertial
 
+def calculate_RTN(state):
+    r = state[0:3]
+    v = state[3:6]
+    R = normalize_vector(r)
+
+    T = normalize_vector(v - np.dot((np.dot(r, v))/np.dot(r, r), r))
+    N = normalize_vector(np.cross(R, T))
+    RTN = np.matrix([R, T, N]).T
+    return RTN
 
 def get_EulerAngle_from_w(w, state):
     phi = state[6]

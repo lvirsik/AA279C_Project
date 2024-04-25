@@ -22,5 +22,14 @@ sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 trajectory = sim.propogate()
 
 # Plots
-plot_euler(trajectory)
-plotStaticAndDynamicVector(sim.L_inertial*0.0005, sim.w_inertial_history)
+time = np.linspace(0, FINAL_TIME, int(FINAL_TIME/TIMESTEP)+1)
+#plot_euler(trajectory)
+#plotStaticAndDynamicVector(sim.L_inertial*0.0005, sim.w_inertial_history)
+
+orbitalVectorX, orbitalVectorY, orbitalVectorZ = extract_columns(sim.RTN_history)
+bodyAxesX, bodyAxesY, bodyAxesZ = extract_columns(sim.R_history)
+principalAxesX, principalAxesY, principalAxesZ = extract_columns(sim.R_prin_history)
+breakpoint()
+plotVectorsOverTime(orbitalVectorX, orbitalVectorY, orbitalVectorZ,
+                    bodyAxesX, bodyAxesY, bodyAxesZ,
+                    principalAxesX, principalAxesY, principalAxesZ, time)
