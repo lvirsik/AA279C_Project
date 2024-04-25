@@ -5,6 +5,7 @@ from Simulator.dynamics import *
 from Graphics.visualizeOrbits import *
 from Graphics.visualizeRotations import *
 from Graphics.visualizeEllipsoids import *
+from Graphics.visualizePset3 import *
 
 # Setup Simulation (Orbit)
 initial_cartesian_state = OE_2_ECI(INITIAL_OEs)
@@ -21,6 +22,14 @@ sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 trajectory = sim.propogate()
 
 # Plots
-plot_euler(trajectory)
-plot_w_Energy_Momentum(initial_state, sim.satellite.I_principle)
-plot_polHode(initial_state, trajectory, sim.satellite.I_principle)
+time = np.linspace(0, FINAL_TIME, int(FINAL_TIME/TIMESTEP)+1)
+#plot_euler(trajectory)
+#plotStaticAndDynamicVector(sim.L_inertial*0.0005, sim.w_inertial_history)
+
+orbitalVectorX, orbitalVectorY, orbitalVectorZ = extract_columns(sim.RTN_history)
+bodyAxesX, bodyAxesY, bodyAxesZ = extract_columns(sim.R_history)
+principalAxesX, principalAxesY, principalAxesZ = extract_columns(sim.R_prin_history)
+breakpoint()
+plotVectorsOverTime(orbitalVectorX, orbitalVectorY, orbitalVectorZ,
+                    bodyAxesX, bodyAxesY, bodyAxesZ,
+                    principalAxesX, principalAxesY, principalAxesZ, time)

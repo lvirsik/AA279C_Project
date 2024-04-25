@@ -23,6 +23,12 @@ class Simulation:
         self.tf = timefinal
         self.previous_time = 0
         self.current_step = 0
+        
+        self.L_inertial = calculate_L_Inertial(self.satellite, self.state)
+        self.w_inertial_history = np.array([calculate_w_inertial(self.satellite, self.state)[0:3]])
+        self.R_history = np.array([q2R(self.state[6:10])])
+        self.R_prin_history = np.expand_dims(np.dot(self.R_history[0], self.satellite.R), axis=0)
+        self.RTN_history = np.expand_dims(calculate_RTN(self.state), axis=0)
 
     def propogate(self):
         """ Simple propogator
@@ -59,6 +65,23 @@ class Simulation:
             if not t == t_vec[-1]:
                 self.current_step += 1
             self.previous_time = t
-        
-        self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, self.ts)))
+            
+            # Run Checks on accuracy of situation and physical constraints
+            self.checks()
+
+            # create w history array
+            self.w_inertial_history = np.vstack((self.w_inertial_history, calculate_w_inertial(self.satellite, state)[0:3]))
+            self.R_history = np.vstack((self.R_history, np.expand_dims(q2R(state[6:10]), axis=0)))
+            self.R_prin_history = np.vstack((self.R_prin_history, np.expand_dims(np.dot(self.R_history[-1], self.satellite.R), axis=0)))
+            self.RTN_history = np.vstack((self.RTN_history, np.expand_dims(calculate_RTN(self.state).T, axis=0)))
+            
+            self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, self.ts)))
+            self.state = state
         return self.statedot_previous
+    
+    def checks(self):
+        tol = 0.0001
+        # if (abs(self.L_inertial - calculate_L_Inertial(self.satellite, self.state)) >= tol).all():
+        #print(calculate_L_Inertial(self.satellite, self.state))
+        #     raise ValueError('PYSICAL LAW VIOLATED: L_INERTIAL CHANGING OVER TIME.')
+        
