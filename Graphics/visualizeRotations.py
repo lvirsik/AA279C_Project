@@ -33,7 +33,8 @@ def plot_euler(trajectory):
         rotational_history[i, 3:6] = rotational_history[i, 4:7]
         rotational_history[i, 0:3] = EAs
         
-        analytical_solution = np.vstack((analytical_solution, axially_symmetric_analytical_solution(i*TIMESTEP, I_COM_BF, INITIAL_w)))[1:len(rotational_history)]
+        analytical_solution = np.vstack((analytical_solution, axially_symmetric_analytical_solution(i*TIMESTEP, I_COM_BF, INITIAL_w)))
+
         
         
 
@@ -45,7 +46,7 @@ def plot_euler(trajectory):
             axs[row, col].plot(rotational_history[:, i] * RAD2DEG)
         else:
             axs[row, col].plot(rotational_history[:, i])
-            #axs[row, col].plot(analytical_solution[:, i-3])
+            axs[row, col].plot(analytical_solution[:, i-3])
         axs[row, col].set_title(rotational_dynamics_plot_names[i])
     
     # Adjust the layout

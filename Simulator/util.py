@@ -93,6 +93,7 @@ def normalize_vector(vector):
     return normalized_vector
 
 def q2R(q):
+    q = normalize_vector(q)
     qX = q[0]
     qY = q[1]
     qZ = q[2]
@@ -173,3 +174,13 @@ def OE_2_ECI(oes):
     vECI = np.dot(R, vPQW)
     ECI = np.concatenate((rECI, vECI))
     return ECI
+
+def L_BF(satellite, state):
+    # Calculate magnitude of anguler momentum
+    L = np.dot(satellite.I_principle, state[10:13])
+    return L
+
+def T_BF(satellite, state):
+    L = L_BF(satellite, state)
+    T = 0.5 * np.dot(state[10:13].T, L)
+    return T

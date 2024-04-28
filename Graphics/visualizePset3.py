@@ -5,6 +5,29 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.widgets import Slider
 import random
 
+def plotStaticAndDynamicVector(static_vector, dynamic_vector_history):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    # Plotting the static vector
+    ax.quiver(0, 0, 0, static_vector[0], static_vector[1], static_vector[2], color='r', label='Static Vector')
+
+    # Extracting x, y, z components of the dynamic vector history
+    x = [v[0] for v in dynamic_vector_history]
+    y = [v[1] for v in dynamic_vector_history]
+    z = [v[2] for v in dynamic_vector_history]
+
+    # Plotting the path of the changing vector over time as lines
+    ax.plot(x, y, z, color='b', alpha=0.5, label='Dynamic Vector Path')
+
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title('Static Vector and Dynamic Vector Path')
+    ax.legend()
+
+    plt.show()
+
 def plotVectorsOverTime(orbitalVectorX, orbitalVectorY, orbitalVectorZ,
                         bodyAxesX, bodyAxesY, bodyAxesZ,
                         principalAxesX, principalAxesY, principalAxesZ,
