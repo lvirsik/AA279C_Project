@@ -17,16 +17,19 @@ def orbital_dynamics(ECI):
     return statedot
 
 def rotational_dynamics(state, satellite, dt):
+    """ Done in Body Axes"""
     
     q = normalize_vector(state[6:10])
-    w = state[10:13]
-
-    torque = np.array([0,0,0])
-    I_dot = (satellite.I_principle - satellite.I_principle_prev) / dt
-    alphas = np.dot(np.linalg.inv(satellite.I_principle), torque - np.cross(w, np.dot(satellite.I_principle, w)) - np.dot(I_dot, w))
     
+    w = state[10:13]
+  
+    torque = np.array([0,0,0])
+    I_dot = (satellite.I - satellite.I_prev) / dt
+    alphas = np.dot(np.linalg.inv(satellite.I), torque - np.cross(w, np.dot(satellite.I, w)) - np.dot(I_dot, w))
+
     statedot = np.zeros((7))
     statedot[0:4] = qdot(q, w)
+
     statedot[4:7] = alphas
     return statedot
 

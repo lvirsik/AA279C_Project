@@ -45,13 +45,13 @@ def get_w_from_EulerAngle(trajectory):
 
 def calculate_L_Inertial(satellite, state):
     w = state[10:13]
-    I_principle = satellite.I_principle
-    L_principle_axis = np.dot(I_principle, w)
-    #print(L_principle_axis)
+    I = satellite.I
+    L_BF = np.dot(I, w)
+
     # Rotate into inertial frame
     q = state[6:10]
     R = q2R(q)
-    L_inertial = np.dot(R, L_principle_axis)
+    L_inertial = np.dot(R, L_BF)
     return L_inertial
        
 def calculate_w_inertial(satellite, state):
@@ -93,6 +93,7 @@ def normalize_vector(vector):
     return normalized_vector
 
 def q2R(q):
+    q = normalize_vector(q)
     qX = q[0]
     qY = q[1]
     qZ = q[2]
@@ -173,3 +174,13 @@ def OE_2_ECI(oes):
     vECI = np.dot(R, vPQW)
     ECI = np.concatenate((rECI, vECI))
     return ECI
+
+def L_BF(satellite, state):
+    # Calculate magnitude of anguler momentum
+    L = np.dot(satellite.I, state[10:13])
+    return L
+
+def T_BF(satellite, state):
+    L = L_BF(satellite, state)
+    T = 0.5 * np.dot(state[10:13].T, L)
+    return T

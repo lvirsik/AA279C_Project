@@ -62,6 +62,10 @@ class Simulation:
         # Check if we are on an actual simulation timestep or if this is ode solving shenanigans
         if (t == 0) or (t >= t_vec[self.current_step] and self.previous_time < t_vec[self.current_step]):
             
+            # Ensure q is normalized
+            state[6:10] = normalize_vector(state[6:10])
+            
+            self.state = state
             if not t == t_vec[-1]:
                 self.current_step += 1
             self.previous_time = t
@@ -71,17 +75,30 @@ class Simulation:
 
             # create w history array
             self.w_inertial_history = np.vstack((self.w_inertial_history, calculate_w_inertial(self.satellite, state)[0:3]))
-            self.R_history = np.vstack((self.R_history, np.expand_dims(q2R(state[6:10]), axis=0)))
-            self.R_prin_history = np.vstack((self.R_prin_history, np.expand_dims(np.dot(self.R_history[-1], self.satellite.R), axis=0)))
+            self.R_history = np.vstack((self.R_history, np.expand_dims(q2R(state[6:10]).T, axis=0)))
+            self.R_prin_history = np.vstack((self.R_prin_history, np.expand_dims(np.dot(self.satellite.R, self.R_history[-1]), axis=0)))
             self.RTN_history = np.vstack((self.RTN_history, np.expand_dims(calculate_RTN(self.state).T, axis=0)))
             
-            self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, self.ts)))
-            self.state = state
+        self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, self.ts)))
         return self.statedot_previous
     
     def checks(self):
-        tol = 0.0001
-        # if (abs(self.L_inertial - calculate_L_Inertial(self.satellite, self.state)) >= tol).all():
-        #print(calculate_L_Inertial(self.satellite, self.state))
-        #     raise ValueError('PYSICAL LAW VIOLATED: L_INERTIAL CHANGING OVER TIME.')
+        # Check that angular velocity is legal given satellite geometry
+        I_values = np.diag(self.satellite.I_principle)
+
+        L = np.linalg.norm(np.dot(self.satellite.R, L_BF(self.satellite, self.state)))
+        T = np.linalg.norm(np.dot(self.satellite.R, T_BF(self.satellite, self.state)))
+        if (L**2)/(2*T) < np.min(I_values):
+            raise ValueError('PHYSICAL LAW VIOLATED: W VECTOR IS NOT LEGAL WITH THIS GEOMETRY - UNDER Imin - value = {} Imin {}'.format((L**2)/(2*T), np.min(I_values)))
+        if (L**2)/(2*T) > np.max(I_values):
+            raise ValueError('PHYSICAL LAW VIOLATED: W VECTOR IS NOT LEGAL WITH THIS GEOMETRY - OVER Imax - value = {} Imax {}'.format((L**2)/(2*T), np.min(I_values)))
+        
+        
+        tol = 0.001
+        if (abs(self.L_inertial - calculate_L_Inertial(self.satellite, self.state)) >= tol).all():
+            print(calculate_L_Inertial(self.satellite, self.state))
+            breakpoint()
+            raise ValueError('PYSICAL LAW VIOLATED: L_INERTIAL CHANGING OVER TIME.')
+        
+        
         
