@@ -46,7 +46,7 @@ def plot_euler(trajectory):
             axs[row, col].plot(rotational_history[:, i] * RAD2DEG)
         else:
             axs[row, col].plot(rotational_history[:, i])
-            axs[row, col].plot(analytical_solution[:, i-3])
+            #axs[row, col].plot(analytical_solution[:, i-3])
         axs[row, col].set_title(rotational_dynamics_plot_names[i])
     
     # Adjust the layout

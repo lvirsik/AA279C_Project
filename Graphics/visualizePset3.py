@@ -25,6 +25,10 @@ def plotStaticAndDynamicVector(static_vector, dynamic_vector_history):
     ax.set_zlabel('Z')
     ax.set_title('Static Vector and Dynamic Vector Path')
     ax.legend()
+    ax.set_xlim([-1, 1])  
+    ax.set_ylim([-1, 1])
+    ax.set_zlim([-1, 1])
+    ax.set_aspect('equal')
 
     plt.show()
 
@@ -120,16 +124,12 @@ def extract_columns(matrix):
 
     return column1[0, 1:len(column1[0])-1], column2[0, 1:len(column2[0])-1], column3[0, 1:len(column3[0])-1]
 
-# time = np.linspace(0, 10, 100)
+def plot_frames_over_time(sim):
+    time = np.linspace(0, sim.tf, int(sim.tf/sim.ts)+1)
+    orbitalVectorX, orbitalVectorY, orbitalVectorZ = extract_columns(sim.RTN_history)
+    bodyAxesX, bodyAxesY, bodyAxesZ = extract_columns(sim.R_history)
+    principalAxesX, principalAxesY, principalAxesZ = extract_columns(sim.R_prin_history)
 
-# orbitalVectorX, orbitalVectorY, orbitalVectorZ = generateTestVectorsOverTime(time)
-# bodyAxesX, bodyAxesY, bodyAxesZ = generateTestVectorsOverTime(time)
-# principalAxesX, principalAxesY, principalAxesZ = generateTestVectorsOverTime(time)
-
-# orbitalVectorX, orbitalVectorY, orbitalVectorZ = extract_columns()
-# bodyAxesX, bodyAxesY, bodyAxesZ = extract_columns()
-# principalAxesX, principalAxesY, principalAxesZ = extract_columns()
-
-# plotVectorsOverTime(orbitalVectorX, orbitalVectorY, orbitalVectorZ,
-#                     bodyAxesX, bodyAxesY, bodyAxesZ,
-#                     principalAxesX, principalAxesY, principalAxesZ, time)
+    plotVectorsOverTime(orbitalVectorX, orbitalVectorY, orbitalVectorZ,
+                        bodyAxesX, bodyAxesY, bodyAxesZ,
+                        principalAxesX, principalAxesY, principalAxesZ, time)
