@@ -22,6 +22,6 @@ sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 trajectory = sim.propogate()
 
 # Plots
-plot_euler(trajectory)
+plot_euler(trajectory, sim)
 plot_frames_over_time(sim)
 

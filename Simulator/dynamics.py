@@ -26,7 +26,7 @@ def rotational_dynamics(state, satellite, dt):
     torque = np.array([0,0,0])
     I_dot = (satellite.I - satellite.I_prev) / dt
     alphas = np.dot(np.linalg.inv(satellite.I), torque - np.cross(w, np.dot(satellite.I, w)) - np.dot(I_dot, w))
-
+    
     statedot = np.zeros((7))
     statedot[0:4] = qdot(q, w)
 

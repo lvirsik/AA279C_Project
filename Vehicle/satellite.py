@@ -1,4 +1,5 @@
 from Vehicle.satelliteConstants import *
+from Simulator.util import *
 import numpy as np
 
 class Satellite:
@@ -15,6 +16,16 @@ class Satellite:
         
     def calculate_R(self):
         value, vector = np.linalg.eig(self.I)
-        I_prinicple = np.diag(value)
         R = vector
+        
+        #Resort to fix from eig
+        indices = np.argsort(np.abs(np.diagonal(self.I)))[::-1]
+        value = value[indices]
+        R = R[:, indices]
+        I_prinicple = np.diag(value)
+        
+        
+        # Normalize Matrix
+        for i in range(len(R)):
+            R[i] = normalize_vector(R[i])
         return I_prinicple, R

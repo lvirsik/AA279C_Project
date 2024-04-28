@@ -7,7 +7,7 @@ from Simulator.simulationConstants import *
 from Simulator.util import *
 from Simulator.dynamics import *
 
-def plot_euler(trajectory):
+def plot_euler(trajectory, sim, frame='pf'):
     rotational_history = trajectory[:, 6:]
 
     # Create a figure for the rotational dynamics plots
@@ -28,13 +28,20 @@ def plot_euler(trajectory):
 
     analytical_solution = np.empty((1, 3))
     for i in range(len(rotational_history)):
-        R = q2R(rotational_history[i,0:4])
-        EAs = R2EAs(R)
-        rotational_history[i, 3:6] = rotational_history[i, 4:7]
-        rotational_history[i, 0:3] = EAs
-        
-        analytical_solution = np.vstack((analytical_solution, axially_symmetric_analytical_solution(i*TIMESTEP, I_COM_BF, INITIAL_w)))
-
+        if frame=='pf':
+            R = np.dot(sim.satellite.R, q2R(rotational_history[i,0:4]))
+            EAs = R2EAs(R)
+            rotational_history[i, 3:6] = np.dot(sim.satellite.R, rotational_history[i, 4:7])
+            rotational_history[i, 0:3] = EAs
+            
+            analytical_solution = np.vstack((analytical_solution, axially_symmetric_analytical_solution(i*TIMESTEP, I_COM_BF, INITIAL_w)))
+        if frame=='bf':
+            R = q2R(rotational_history[i,0:4])
+            EAs = R2EAs(R)
+            rotational_history[i, 3:6] = rotational_history[i, 4:7]
+            rotational_history[i, 0:3] = EAs
+            
+            analytical_solution = np.vstack((analytical_solution, axially_symmetric_analytical_solution(i*TIMESTEP, I_COM_BF, INITIAL_w)))
         
         
 
