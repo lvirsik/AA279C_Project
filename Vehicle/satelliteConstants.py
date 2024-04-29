@@ -10,3 +10,5 @@ I_COM_BF = np.array([[2185.6, 1.32, -0.08],
 # Rotor
 ROTOR_MASS = 20 #kg
 ROTOR_SPEED = 10 #rad/s
+ROTOR_DIRECTION = np.array([1,0,0])
+I_ROTOR = 100
