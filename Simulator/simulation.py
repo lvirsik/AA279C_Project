@@ -14,8 +14,6 @@ class Simulation:
         
         # States and Histories
         self.state = starting_state
-        self.state[10:13] = np.dot(self.satellite.R, np.array([0,1,0]))
-        self.state[6:10] = R2q(calculate_RTN(self.state))
         self.state_previous = copy.copy(self.state)
         self.statedot_previous = np.zeros(len(starting_state))
         self.error_history = np.empty((0,len(starting_state)))
