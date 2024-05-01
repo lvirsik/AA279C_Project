@@ -43,8 +43,7 @@ def rotational_dynamics(state, satellite, dt):
                     np.cross(w, np.dot(satellite.I, w)) - 
                     np.dot(I_dot, w) - 
                     rotor_I * wr_dot * rotor_r - 
-                    np.dot(R, rotor_I * ((wr * rotor_r) - w) * np.cross(w, rotor_r)))
-    breakpoint()
+                    rotor_I * wr * np.cross(w, rotor_r))
 
     statedot = np.zeros((7))
     statedot[0:4] = qdot(q, w)

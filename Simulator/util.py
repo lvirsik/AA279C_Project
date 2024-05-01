@@ -51,9 +51,10 @@ def calculate_L_Inertial(satellite, state):
     # Rotate into inertial frame
     q = state[6:10]
     R = q2R(q)
+    R_inv = np.linalg.inv(R)
     L_inertial = np.dot(R, L_BF)
     if hasattr(satellite, 'rotor'):
-        L_inertial = L_inertial + np.dot(R, (satellite.rotor.I * ((satellite.rotor.angular_speed * satellite.rotor.direction) - w)))
+        L_inertial = L_inertial + np.dot(R, (satellite.rotor.I * (satellite.rotor.angular_speed * satellite.rotor.direction)))
         print(L_inertial)
     return L_inertial
        
