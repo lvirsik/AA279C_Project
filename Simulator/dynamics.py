@@ -37,33 +37,10 @@ def rotational_dynamics(state, satellite, dt):
     q = normalize_vector(state[6:10])
     w = state[10:13]
     R = q2R(state)
-    
-    '''
-    print("1: " + str(np.shape((R*satellite.R).T)))
-    print((R*satellite.R).T)
-    test = calculate_RTN(state)
-    print("2: " + str(np.shape(test)))
-    print(test)
-    '''
 
     torque = np.array([0.0,0.0,0.0])
-    print(torque)
-    RTN_state = calculate_RTN(state)
-    #principle_axis = (R*satellite.R).T
-    principle_axis = RTN_state
-
-    angles_R2P = angles_between_matrix(RTN_state, principle_axis)
-    #print(angles_R2P)
-
-    a = INITIAL_OEs[0]
-    mu = MU_JUPITER
-    n = np.sqrt(mu/a**3)
-    
-    c = [1.0, -angles_R2P[2][0,0], angles_R2P[1][0,0]]
-    #c = [1.0, 0.0, 0.0]
-    torque += 3*(n**2)*(np.cross(c, np.dot(satellite.I, c)))
-    # print(torque)
-
+    torque += get_gravGrad_T(state, satellite)
+    satellite.torque_history.append(torque)
 
     I_dot = (satellite.I - satellite.I_prev) / dt
     alphas = np.dot(np.linalg.inv(satellite.I), torque - 
@@ -118,4 +95,21 @@ def axially_symmetric_analytical_solution(t, I, state_initial):
     wz = wz0
     
     return np.array([wx, wy, wz])
+
+def get_gravGrad_T(state, satellite):
+    R = q2R(state)
+    RTN_state = calculate_RTN(state)
+    # principle_axis = RTN_state
+    principle_axis = (R*satellite.R).T
+
+    angles_R2P = angles_between_matrix(RTN_state, principle_axis)
+
+    a = INITIAL_OEs[0] * 100
+    mu = MU_JUPITER
+    n = np.sqrt(mu/a**3)
+    
+    c = [1.0, -angles_R2P[2], angles_R2P[1]]
+    torque = 3*(n**2)*(np.cross(c, np.dot(satellite.I, c)))
+
+    return torque
     

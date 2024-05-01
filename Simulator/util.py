@@ -72,7 +72,7 @@ def calculate_RTN(state):
 
     T = normalize_vector(v - np.dot((np.dot(r, v))/np.dot(r, r), r))
     N = normalize_vector(np.cross(R, T))
-    RTN = np.matrix([R, T, N]).T
+    RTN = np.array([R, T, N]).T
     return RTN
 
 def get_EulerAngle_from_w(w, state):
@@ -221,12 +221,8 @@ def T_BF(satellite, state):
 
 def angles_between_matrix(matrix_1, matrix_2):
     angles = []
-    #print(matrix_1)
-    #print(matrix_2)
-
     for i in range(3):
-        
-        dot_product = np.dot(matrix_1, matrix_2)
+        dot_product = np.dot(matrix_1[i], matrix_2[i])
 
         mag_1 = np.linalg.norm(matrix_1[i])
         mag_2 = np.linalg.norm(matrix_2[i])
