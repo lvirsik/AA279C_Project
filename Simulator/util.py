@@ -218,3 +218,22 @@ def T_BF(satellite, state):
     L = L_BF(satellite, state)
     T = 0.5 * np.dot(state[10:13].T, L)
     return T
+
+def angles_between_matrix(matrix_1, matrix_2):
+    angles = []
+    #print(matrix_1)
+    #print(matrix_2)
+
+    for i in range(3):
+        
+        dot_product = np.dot(matrix_1, matrix_2)
+
+        mag_1 = np.linalg.norm(matrix_1[i])
+        mag_2 = np.linalg.norm(matrix_2[i])
+
+        cosine_angle = (dot_product / (mag_1 * mag_2))
+
+        angle_rad = np.arccos(np.clip(cosine_angle, -1.0, 1.0))
+
+        angles.append(angle_rad)
+    return angles

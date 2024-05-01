@@ -1,5 +1,6 @@
 import numpy as np
 from Simulator.simulationConstants import *
+from Simulator.util import *
 from Graphics.visualizeEllipsoids import *
 import cmath
 
@@ -35,13 +36,39 @@ def rotational_dynamics(state, satellite, dt):
     
     q = normalize_vector(state[6:10])
     w = state[10:13]
-    R = q2R(q)
+    R = q2R(state)
     
-    torque = np.array([0,0,0])
+    '''
+    print("1: " + str(np.shape((R*satellite.R).T)))
+    print((R*satellite.R).T)
+    test = calculate_RTN(state)
+    print("2: " + str(np.shape(test)))
+    print(test)
+    '''
+
+    torque = np.array([0.0,0.0,0.0])
+    print(torque)
+    RTN_state = calculate_RTN(state)
+    #principle_axis = (R*satellite.R).T
+    principle_axis = RTN_state
+
+    angles_R2P = angles_between_matrix(RTN_state, principle_axis)
+    #print(angles_R2P)
+
+    a = INITIAL_OEs[0]
+    mu = MU_JUPITER
+    n = np.sqrt(mu/a**3)
+    
+    c = [1.0, -angles_R2P[2][0,0], angles_R2P[1][0,0]]
+    #c = [1.0, 0.0, 0.0]
+    torque += 3*(n**2)*(np.cross(c, np.dot(satellite.I, c)))
+    # print(torque)
+
+
     I_dot = (satellite.I - satellite.I_prev) / dt
     alphas = np.dot(np.linalg.inv(satellite.I), torque - 
                     np.cross(w, np.dot(satellite.I, w)) - 
-                    np.dot(I_dot, w) - 
+                    np.dot(I_dot, w) -
                     rotor_I * wr_dot * rotor_r - 
                     rotor_I * wr * np.cross(w, rotor_r))
 
