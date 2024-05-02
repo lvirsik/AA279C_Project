@@ -51,7 +51,10 @@ def calculate_L_Inertial(satellite, state):
     # Rotate into inertial frame
     q = state[6:10]
     R = q2R(q)
+    R_inv = np.linalg.inv(R)
     L_inertial = np.dot(R, L_BF)
+    if hasattr(satellite, 'rotor'):
+        L_inertial = L_inertial + np.dot(R, (satellite.rotor.I * (satellite.rotor.angular_speed * satellite.rotor.direction)))
     return L_inertial
        
 def calculate_w_inertial(satellite, state):
@@ -91,6 +94,37 @@ def normalize_vector(vector):
     normalized_vector = [component / length for component in vector]
     
     return normalized_vector
+
+def R2q(m):
+    #q0 = qw
+    t = np.matrix.trace(m)
+    q = np.asarray([0.0, 0.0, 0.0, 0.0], dtype=np.float64)
+
+    if(t > 0):
+        t = np.sqrt(t + 1)
+        q[3] = 0.5 * t
+        t = 0.5/t
+        q[0] = (m[2,1] - m[1,2]) * t
+        q[1] = (m[0,2] - m[2,0]) * t
+        q[2] = (m[1,0] - m[0,1]) * t
+
+    else:
+        i = 0
+        if (m[1,1] > m[0,0]):
+            i = 1
+        if (m[2,2] > m[i,i]):
+            i = 2
+        j = (i+1)%3
+        k = (j+1)%3
+
+        t = np.sqrt(m[i,i] - m[j,j] - m[k,k] + 1)
+        q[i] = 0.5 * t
+        t = 0.5 / t
+        q[3] = (m[k,j] - m[j,k]) * t
+        q[j] = (m[j,i] + m[i,j]) * t
+        q[k] = (m[k,i] + m[i,k]) * t
+
+    return q
 
 def q2R(q):
     q = normalize_vector(q)

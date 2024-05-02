@@ -19,13 +19,31 @@ def orbital_dynamics(ECI):
 def rotational_dynamics(state, satellite, dt):
     """ Done in Body Axes"""
     
-    q = normalize_vector(state[6:10])
+    # Check for rotor
+    if hasattr(satellite, 'rotor'):
+        # For now, assume torque on rotor is zero
+        rotor_I = satellite.rotor.I
+        rotor_r = satellite.rotor.direction
+        wr = satellite.rotor.angular_speed
+        wr_dot = 0
+    else:
+        rotor_I = 0
+        rotor_r = np.array([0,0,0])
+        wr = 0
+        wr_dot = 0
+        
     
+    q = normalize_vector(state[6:10])
     w = state[10:13]
-  
+    R = q2R(q)
+    
     torque = np.array([0,0,0])
     I_dot = (satellite.I - satellite.I_prev) / dt
-    alphas = np.dot(np.linalg.inv(satellite.I), torque - np.cross(w, np.dot(satellite.I, w)) - np.dot(I_dot, w))
+    alphas = np.dot(np.linalg.inv(satellite.I), torque - 
+                    np.cross(w, np.dot(satellite.I, w)) - 
+                    np.dot(I_dot, w) - 
+                    rotor_I * wr_dot * rotor_r - 
+                    rotor_I * wr * np.cross(w, rotor_r))
 
     statedot = np.zeros((7))
     statedot[0:4] = qdot(q, w)
