@@ -27,7 +27,6 @@ def plot_torque(trajectory, satellite):
     ax.set_box_aspect([1,1,1])
     
     ax.set_title("Torque vs Time")
-    
     plt.show()
 
 def extract_columns(matrix):
