@@ -93,12 +93,9 @@ class Simulation:
         if (L**2)/(2*T) > np.max(I_values):
             raise ValueError('PHYSICAL LAW VIOLATED: W VECTOR IS NOT LEGAL WITH THIS GEOMETRY - OVER Imax - value = {} Imax {}'.format((L**2)/(2*T), np.min(I_values)))
         
-        tol = 0.001
+        tol = 0.01
         if (abs(self.L_inertial - calculate_L_Inertial(self.satellite, self.state)) >= tol).all():
-            pass
-        #     print(calculate_L_Inertial(self.satellite, self.state))
-        #     breakpoint()
-        #     raise ValueError('PYSICAL LAW VIOLATED: L_INERTIAL CHANGING OVER TIME.')
+            raise ValueError('PYSICAL LAW VIOLATED: L_INERTIAL CHANGING OVER TIME.')
         
         
         
