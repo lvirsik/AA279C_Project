@@ -37,6 +37,6 @@ class Satellite:
             R[i] = normalize_vector(R[i])
         return I_prinicple, R
     
-    def get_magnetic_dipole():
+    def get_magnetic_dipole(self):
         """ IN BODY FRAME"""
         return np.array([0,0, mu0 * NUM_COILS * SURF_IN_COIL * CURRENT])

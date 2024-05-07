@@ -60,7 +60,7 @@ class Simulation:
     def wrapper_state_to_stateDot(self, t, state, satellite, t_vec):
         """ Wrapper for the dynamics, most of the work done in this step. It calls the controller and updates the state."""
         # Check if we are on an actual simulation timestep or if this is ode solving shenanigans
-        breakpoint()
+        
         if (t == 0) or (t >= t_vec[self.current_step] and self.previous_time < t_vec[self.current_step]):
             # Ensure q is normalized
             state[6:10] = normalize_vector(state[6:10])
@@ -69,7 +69,6 @@ class Simulation:
             if not t == t_vec[-1]:
                 self.current_step += 1
             self.previous_time = t
-            print(t)
             # Run Checks on accuracy of situation and physical constraints
             self.checks()
 
@@ -79,7 +78,7 @@ class Simulation:
             self.R_prin_history = np.vstack((self.R_prin_history, np.expand_dims(np.dot(self.satellite.R, self.R_history[-1]), axis=0)))
             self.RTN_history = np.vstack((self.RTN_history, np.expand_dims(calculate_RTN(self.state).T, axis=0)))
             
-        self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, self.ts)))
+        self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, t, self.ts)))
         return self.statedot_previous
     
     def checks(self):
@@ -93,9 +92,10 @@ class Simulation:
         if (L**2)/(2*T) > np.max(I_values):
             raise ValueError('PHYSICAL LAW VIOLATED: W VECTOR IS NOT LEGAL WITH THIS GEOMETRY - OVER Imax - value = {} Imax {}'.format((L**2)/(2*T), np.min(I_values)))
         
-        tol = 0.01
-        if (abs(self.L_inertial - calculate_L_Inertial(self.satellite, self.state)) >= tol).all():
-            raise ValueError('PYSICAL LAW VIOLATED: L_INERTIAL CHANGING OVER TIME.')
+        # TURNING OFF BECAUSE OF TORQUES
+        # tol = 0.01
+        # if (abs(self.L_inertial - calculate_L_Inertial(self.satellite, self.state)) >= tol).all():
+        #     raise ValueError('PYSICAL LAW VIOLATED: L_INERTIAL CHANGING OVER TIME.')
         
         
         

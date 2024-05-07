@@ -18,7 +18,7 @@ def orbital_dynamics(ECI):
     
     return statedot
 
-def rotational_dynamics(state, satellite, dt):
+def rotational_dynamics(state, satellite, t, dt):
     """ Done in Body Axes"""
     
     # Check for rotor
@@ -34,12 +34,10 @@ def rotational_dynamics(state, satellite, dt):
         wr = 0
         wr_dot = 0
         
-    
     q = normalize_vector(state[6:10])
     w = state[10:13]
 
-    torque = np.array([0.0,0.0,0.0])
-    torque += get_gravGrad_Torque(state, satellite)
+    torque = get_gravGrad_Torque(state, satellite) + get_magnetic_Torque(state, satellite, t)
     satellite.torque_history.append(torque)
 
     I_dot = (satellite.I - satellite.I_prev) / dt
