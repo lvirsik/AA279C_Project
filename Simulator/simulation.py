@@ -1,5 +1,5 @@
 import numpy as np
-import scipy
+import scipy.integrate
 import copy
 from Simulator.simulationConstants import *
 from Simulator.dynamics import *
@@ -51,7 +51,7 @@ class Simulation:
         # Create t vector from 0 to tf with timestep ts
         t_span = np.linspace(0, int(tf/ts)*ts, num=int(tf/ts)+1)
         t = (0,self.tf)
-        
+       
         solution = scipy.integrate.solve_ivp(self.wrapper_state_to_stateDot, t, state, 
                                              args=(self.satellite, t_span), t_eval=t_span, max_step=ts/5)
         state_history = solution['y'].T
@@ -60,8 +60,8 @@ class Simulation:
     def wrapper_state_to_stateDot(self, t, state, satellite, t_vec):
         """ Wrapper for the dynamics, most of the work done in this step. It calls the controller and updates the state."""
         # Check if we are on an actual simulation timestep or if this is ode solving shenanigans
+        breakpoint()
         if (t == 0) or (t >= t_vec[self.current_step] and self.previous_time < t_vec[self.current_step]):
-            
             # Ensure q is normalized
             state[6:10] = normalize_vector(state[6:10])
             
@@ -69,7 +69,7 @@ class Simulation:
             if not t == t_vec[-1]:
                 self.current_step += 1
             self.previous_time = t
-            
+            print(t)
             # Run Checks on accuracy of situation and physical constraints
             self.checks()
 

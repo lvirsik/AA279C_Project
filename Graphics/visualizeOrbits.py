@@ -4,6 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.image import imread
 from Simulator.simulationConstants import *
+from Simulator.enviornmentConstants import *
 
 def plot_orbit(trajectory):
     # Plot trajectory in 3D
