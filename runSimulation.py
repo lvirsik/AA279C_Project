@@ -6,6 +6,7 @@ from Graphics.visualizeOrbits import *
 from Graphics.visualizeRotations import *
 from Graphics.visualizeEllipsoids import *
 from Graphics.visualizePset3 import *
+from Graphics.visualizePset4_4 import *
 
 # Setup Simulation (Orbit)
 initial_cartesian_state = OE_2_ECI(INITIAL_OEs)
@@ -22,6 +23,9 @@ sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 trajectory = sim.propogate()
 
 # Plots
-plot_euler(trajectory, sim)
-plot_frames_over_time(sim)
+#plot_euler(trajectory, sim)
+#plot_frames_over_time(sim)
+
+plot_orbit(trajectory)
+plot_torque(trajectory, sim.satellite)
 

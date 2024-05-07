@@ -16,7 +16,9 @@ class Satellite:
         self.I_principle_prev = self.I_principle
         
         # Initialize Rotor
-        self.rotor = Rotor()
+        #self.rotor = Rotor()
+
+        self.torque_history = []
         
     def calculate_R(self):
         value, vector = np.linalg.eig(self.I)
