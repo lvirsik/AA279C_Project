@@ -99,7 +99,6 @@ def axially_symmetric_analytical_solution(t, I, state_initial):
 def get_gravGrad_T(state, satellite):
     R = q2R(state)
     RTN_state = calculate_RTN(state)
-    # principle_axis = RTN_state
     principle_axis = (R*satellite.R).T
 
     angles_R2P = angles_between_matrix(RTN_state, principle_axis)
