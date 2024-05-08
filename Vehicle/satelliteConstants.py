@@ -17,7 +17,7 @@ ROTOR_DIRECTION = np.array([0,1,0])
 I_ROTOR = 100
 
 # Magnetic Moment
-NUM_COILS = 10
+NUM_COILS = 2
 CURRENT = 0.25 #A
-SURF_IN_COIL = 1 #m^2
+SURF_IN_COIL = 0.5 #m^2
 

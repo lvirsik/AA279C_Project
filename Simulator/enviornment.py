@@ -5,18 +5,15 @@ from Simulator.enviornmentConstants import *
 
 def get_gravGrad_Torque(state, satellite):
     R = q2R(state)
-    RTN_state = calculate_RTN(state)
-    principle_axis = (R*satellite.R).T
-
-    angles_R2P = angles_between_matrix(RTN_state, principle_axis)
-
-    a = INITIAL_OEs[0] * 100
-    mu = MU_JUPITER
-    n = np.sqrt(mu/a**3)
     
-    c = [1.0, -angles_R2P[2], angles_R2P[1]]
-    torque = 3*(n**2)*(np.cross(c, np.dot(satellite.I, c)))
-
+    r = state[0:3]
+    r_norm = np.linalg.norm(r)
+    R = q2R(state)
+    r_body_axes = np.dot(np.linalg.inv(R), r)
+    c = r_body_axes / r_norm
+    mu = MU_JUPITER
+    
+    torque = (3 * mu / (r_norm ** 3)) * np.cross(np.dot(satellite.I, c), c)
     return torque
 
 def get_magnetic_Torque(state, satellite, t):
@@ -41,6 +38,6 @@ def get_magnetic_Torque(state, satellite, t):
     return torque
     
 def get_jupiter_theta(t):
-    return STARTING_THETA_JUPITER + ROT_PERIOD_JUPITER * t
+    return STARTING_THETA_JUPITER + (2 * np.pi * (t / ROT_PERIOD_JUPITER))
     
     
