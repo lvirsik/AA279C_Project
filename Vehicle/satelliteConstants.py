@@ -15,3 +15,9 @@ ROTOR_MASS = 20 #kg
 ROTOR_SPEED = 10 #rad/s
 ROTOR_DIRECTION = np.array([0,1,0])
 I_ROTOR = 100
+
+# Magnetic Moment
+NUM_COILS = 10
+CURRENT = 0.25 #A
+SURF_IN_COIL = 1 #m^2
+

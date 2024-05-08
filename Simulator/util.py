@@ -2,6 +2,7 @@ import numpy as np
 import math
 from Simulator.simulationConstants import *
 from scipy.spatial.transform import Rotation
+from Simulator.enviornmentConstants import *
 
 def get_w_from_EulerAngle(trajectory):
      # 1 2 3 = phi theta psi = yaw pitch roll

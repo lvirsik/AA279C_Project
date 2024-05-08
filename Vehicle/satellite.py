@@ -1,6 +1,7 @@
 from Vehicle.satelliteConstants import *
 from Simulator.util import *
 from Vehicle.rotor import *
+from Simulator.enviornmentConstants import *
 import numpy as np
 
 class Satellite:
@@ -35,3 +36,7 @@ class Satellite:
         for i in range(len(R)):
             R[i] = normalize_vector(R[i])
         return I_prinicple, R
+    
+    def get_magnetic_dipole(self):
+        """ IN BODY FRAME"""
+        return np.array([0,0, mu0 * NUM_COILS * SURF_IN_COIL * CURRENT])
