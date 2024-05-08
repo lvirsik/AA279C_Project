@@ -26,6 +26,7 @@ def runSIM():
     # Plots
     plot_euler(trajectory, sim)
     plot_frames_over_time(sim)
+    plot_torques_over_time(sim)
 
     plot_orbit(trajectory)
     plot_torque(trajectory, sim.satellite)

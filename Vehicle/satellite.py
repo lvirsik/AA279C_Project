@@ -19,7 +19,8 @@ class Satellite:
         # Initialize Rotor
         #self.rotor = Rotor()
 
-        self.torque_history = []
+        self.gg_torque_history = np.zeros((1, 3))
+        self.mag_torque_history = np.zeros((1, 3))
         
     def calculate_R(self):
         value, vector = np.linalg.eig(self.I)
@@ -39,4 +40,4 @@ class Satellite:
     
     def get_magnetic_dipole(self):
         """ IN BODY FRAME"""
-        return np.array([0,0, mu0 * NUM_COILS * SURF_IN_COIL * CURRENT])
+        return np.array([0, mu0 * NUM_COILS * SURF_IN_COIL * CURRENT, 0])

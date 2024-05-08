@@ -36,10 +36,13 @@ def rotational_dynamics(state, satellite, t, dt):
         
     q = normalize_vector(state[6:10])
     w = state[10:13]
-
-    torque = get_gravGrad_Torque(state, satellite) + get_magnetic_Torque(state, satellite, t)
-    satellite.torque_history.append(torque)
-
+    
+    gg_torque = get_gravGrad_Torque(state, satellite)
+    m_torque = get_magnetic_Torque(state, satellite, t)
+    satellite.gg_torque_history = np.vstack((satellite.gg_torque_history, gg_torque))
+    satellite.mag_torque_history = np.vstack((satellite.mag_torque_history, m_torque))
+    torque = gg_torque + m_torque
+    
     I_dot = (satellite.I - satellite.I_prev) / dt
     alphas = np.dot(np.linalg.inv(satellite.I), torque - 
                     np.cross(w, np.dot(satellite.I, w)) - 
