@@ -7,6 +7,7 @@ from Graphics.visualizeRotations import *
 from Graphics.visualizeEllipsoids import *
 from Graphics.visualizePset3 import *
 from Graphics.visualizePset4_4 import *
+from Graphics.visualizePset5_1 import *
 
 def runSIM():
     # Setup Simulation (Orbit)
@@ -21,14 +22,15 @@ def runSIM():
     sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 
     # Run Simulation (Rotations)
-    trajectory = sim.propogate()
+    #trajectory = sim.propogate()
 
     # Plots
-    plot_euler(trajectory, sim)
-    plot_frames_over_time(sim)
-    plot_torques_over_time(sim)
+    plot_GG_coeff(sim.satellite)
+    #plot_euler(trajectory, sim)
+    #plot_frames_over_time(sim)
+    #plot_torques_over_time(sim)
 
-    plot_orbit(trajectory)
-    plot_torque(trajectory, sim.satellite)
+    #plot_orbit(trajectory)
+    #plot_torque(trajectory, sim.satellite)
 
 runSIM()

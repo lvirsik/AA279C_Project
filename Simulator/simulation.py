@@ -70,7 +70,7 @@ class Simulation:
                 self.current_step += 1
             self.previous_time = t
             # Run Checks on accuracy of situation and physical constraints
-            self.checks()
+            # self.checks()
 
             # create w history array
             self.w_inertial_history = np.vstack((self.w_inertial_history, calculate_w_inertial(self.satellite, state)[0:3]))
