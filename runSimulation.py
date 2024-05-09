@@ -22,11 +22,11 @@ def runSIM():
     sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
 
     # Run Simulation (Rotations)
-    #trajectory = sim.propogate()
+    trajectory = sim.propogate()
 
     # Plots
     plot_GG_coeff(sim.satellite)
-    #plot_euler(trajectory, sim)
+    plot_euler(trajectory, sim)
     #plot_frames_over_time(sim)
     #plot_torques_over_time(sim)
 
