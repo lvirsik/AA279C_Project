@@ -129,12 +129,14 @@ def plot_torques_over_time(sim):
     
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    ax.set_xlim([-10**-12, 10**-12])  
-    ax.set_ylim([-10**-12, 10**-12])
-    ax.set_zlim([-10**-12, 10**-12])
+    ax.set_xlim([-10**-6, 10**-6])  
+    ax.set_ylim([-10**-6, 10**-6])
+    ax.set_zlim([-10**-6, 10**-6])
     
     GG = ax.quiver(0, 0, 0, sim.satellite.gg_torque_history[0, 0], sim.satellite.gg_torque_history[1, 0], sim.satellite.gg_torque_history[2, 0], color='r', label='Gravity Gradient Torque')
     MAG = ax.quiver(0, 0, 0, sim.satellite.mag_torque_history[0, 0], sim.satellite.mag_torque_history[1, 0], sim.satellite.mag_torque_history[2, 0], color='g', label='Magnetic Torque')
+    SRP = ax.quiver(0, 0, 0, sim.satellite.srp_torque_history[0, 0], sim.satellite.srp_torque_history[1, 0], sim.satellite.srp_torque_history[2, 0], color='y', label='SRP Torque')
+    TOTAL = ax.quiver(0, 0, 0, sim.satellite.torque_history[0, 0], sim.satellite.torque_history[1, 0], sim.satellite.torque_history[2, 0], color='b', label='Total Torque')
     
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
@@ -150,6 +152,8 @@ def plot_torques_over_time(sim):
 
         GG.set_segments([np.array([[0, 0, 0], sim.satellite.gg_torque_history[index]])])
         MAG.set_segments([np.array([[0, 0, 0], sim.satellite.mag_torque_history[index]])])
+        SRP.set_segments([np.array([[0, 0, 0], sim.satellite.srp_torque_history[index]])])
+        TOTAL.set_segments([np.array([[0, 0, 0], sim.satellite.torque_history[index]])])
 
         ax.set_title('Vectors in 3D Space at Time: {:.2f}'.format(time[index]))
         fig.canvas.draw_idle()

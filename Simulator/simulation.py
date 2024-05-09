@@ -64,7 +64,7 @@ class Simulation:
         if (t == 0) or (t >= t_vec[self.current_step] and self.previous_time < t_vec[self.current_step]):
             # Ensure q is normalized
             state[6:10] = normalize_vector(state[6:10])
-            
+            #print(q2R(state[6:10]))
             self.state = state
             if not t == t_vec[-1]:
                 self.current_step += 1
@@ -77,7 +77,7 @@ class Simulation:
             self.R_history = np.vstack((self.R_history, np.expand_dims(q2R(state[6:10]).T, axis=0)))
             self.R_prin_history = np.vstack((self.R_prin_history, np.expand_dims(np.dot(self.satellite.R, self.R_history[-1]), axis=0)))
             self.RTN_history = np.vstack((self.RTN_history, np.expand_dims(calculate_RTN(self.state).T, axis=0)))
-            
+
         self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, t, self.ts)))
         return self.statedot_previous
     

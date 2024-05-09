@@ -19,8 +19,7 @@ def orbital_dynamics(ECI):
     return statedot
 
 def rotational_dynamics(state, satellite, t, dt):
-    """ Done in Body Axes"""
-    
+    """ Done in Body Axes"""   
     # Check for rotor
     if hasattr(satellite, 'rotor'):
         # For now, assume torque on rotor is zero
@@ -37,12 +36,18 @@ def rotational_dynamics(state, satellite, t, dt):
     q = normalize_vector(state[6:10])
     w = state[10:13]
     
+    # Deal with Torques
     gg_torque = get_gravGrad_Torque(state, satellite)
     m_torque = get_magnetic_Torque(state, satellite, t)
+    srp_torque = get_SRP_torque(state, satellite, t)
+
     satellite.gg_torque_history = np.vstack((satellite.gg_torque_history, gg_torque))
     satellite.mag_torque_history = np.vstack((satellite.mag_torque_history, m_torque))
-    torque = gg_torque + m_torque
+    satellite.srp_torque_history = np.vstack((satellite.srp_torque_history, srp_torque))
+    torque = gg_torque + m_torque + srp_torque
+    satellite.torque_history = np.vstack((satellite.torque_history, torque))
     
+    # Euler Equations
     I_dot = (satellite.I - satellite.I_prev) / dt
     alphas = np.dot(np.linalg.inv(satellite.I), torque - 
                     np.cross(w, np.dot(satellite.I, w)) - 
