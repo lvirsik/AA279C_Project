@@ -32,7 +32,6 @@ def get_magnetic_Torque(state, satellite, t):
     B_JCI = -((R_JUPITER**3)*(B0_JUPITER)/(r_norm**3)) * ((3 * np.dot(jupiter_dipole_direction, r_unit) * r_unit) - jupiter_dipole_direction)
     B_body = np.dot(np.linalg.inv(R), B_JCI)
     torque = np.cross(m, B_body)
-
     return torque
     
 def get_jupiter_theta(t):
@@ -40,12 +39,12 @@ def get_jupiter_theta(t):
 
 def get_SRP_torque(state, satellite, t):
     torque = np.array([0.0,0.0,0.0])
+    S_JCI = SUN_POSITION_JCI
+    R = q2R(state[6:10])
+    S = np.dot(np.linalg.inv(R), S_JCI) # Sun in body frame
     for i in range(len(satellite.surfaces)):
         A = satellite.surfaces[i, 3]
         N = satellite.surfaces[i, 4:7]
-        S_JCI = SUN_POSITION_JCI
-        R = q2R(state[6:10])
-        S = np.dot(np.linalg.inv(R), S_JCI) # Sun in body frame
         cos_theta = np.dot(S, N) / (np.linalg.norm(S) * np.linalg.norm(N))
         force = -SOLAR_CONSTANT * ((1 - satellite.Cs) * S + 2 * (satellite.Cs * cos_theta + satellite.Cd / 3) * N) * cos_theta * A
         
@@ -55,6 +54,6 @@ def get_SRP_torque(state, satellite, t):
         else:
             e = 1
         torque += np.cross(r_2_COM, e * force)
-
+    
     return torque
     

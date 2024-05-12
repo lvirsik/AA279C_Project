@@ -12,4 +12,4 @@ JUPITER_DIPOLE_ANGLE_OFFSET = np.deg2rad(10) # offset in degrees to radiatns
 mu0 = 4 * np.pi * 10**(-7)
 
 # Solar Radiation
-SOLAR_CONSTANT = 0.34 * 10**(-6) #W/m^2
+SOLAR_CONSTANT = 0.34 * 10**(-6) #N/m^2
