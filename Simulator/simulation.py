@@ -29,6 +29,8 @@ class Simulation:
         self.R_history = np.array([q2R(self.state[6:10])])
         self.R_prin_history = np.expand_dims(np.dot(self.R_history[0], self.satellite.R), axis=0)
         self.RTN_history = np.expand_dims(calculate_RTN(self.state), axis=0)
+        
+        self.statedot = (orbital_dynamics(self.state[0:6]), rotational_dynamics(self.state, self.satellite, 0, self.ts))
 
     def propogate(self):
         """ Simple propogator
@@ -64,7 +66,7 @@ class Simulation:
         if (t == 0) or (t >= t_vec[self.current_step] and self.previous_time < t_vec[self.current_step]):
             # Ensure q is normalized
             state[6:10] = normalize_vector(state[6:10])
-            
+            #print(q2R(state[6:10]))
             self.state = state
             if not t == t_vec[-1]:
                 self.current_step += 1
@@ -78,7 +80,9 @@ class Simulation:
             self.R_prin_history = np.vstack((self.R_prin_history, np.expand_dims(np.dot(self.satellite.R, self.R_history[-1]), axis=0)))
             self.RTN_history = np.vstack((self.RTN_history, np.expand_dims(calculate_RTN(self.state).T, axis=0)))
             
-        self.statedot_previous = np.concatenate((orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, t, self.ts)))
+            self.statedot = (orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, t, self.ts))
+
+        self.statedot_previous = np.concatenate(self.statedot)
         return self.statedot_previous
     
     def checks(self):

@@ -126,32 +126,35 @@ def extract_columns(matrix):
 
 def plot_torques_over_time(sim):
     time = np.linspace(0, sim.tf, int(sim.tf/sim.ts)+1)
-    
+
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    ax.set_xlim([-10**-12, 10**-12])  
-    ax.set_ylim([-10**-12, 10**-12])
-    ax.set_zlim([-10**-12, 10**-12])
+    ax.set_xlim([-10**-6, 10**-6])  
+    ax.set_ylim([-10**-6, 10**-6])
+    ax.set_zlim([-10**-6, 10**-6])
     
     GG = ax.quiver(0, 0, 0, sim.satellite.gg_torque_history[0, 0], sim.satellite.gg_torque_history[1, 0], sim.satellite.gg_torque_history[2, 0], color='r', label='Gravity Gradient Torque')
     MAG = ax.quiver(0, 0, 0, sim.satellite.mag_torque_history[0, 0], sim.satellite.mag_torque_history[1, 0], sim.satellite.mag_torque_history[2, 0], color='g', label='Magnetic Torque')
+    SRP = ax.quiver(0, 0, 0, sim.satellite.srp_torque_history[0, 0], sim.satellite.srp_torque_history[1, 0], sim.satellite.srp_torque_history[2, 0], color='y', label='SRP Torque')
+    TOTAL = ax.quiver(0, 0, 0, sim.satellite.torque_history[0, 0], sim.satellite.torque_history[1, 0], sim.satellite.torque_history[2, 0], color='b', label='Total Torque')
     
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
     ax.set_title('Torques in 3D Body axes at Time: {:.2f}'.format(time[0]))
     ax.legend()
-
     ax_time = plt.axes([0.1, 0.01, 0.8, 0.03], facecolor='lightgoldenrodyellow')
     slider = Slider(ax_time, 'Time', 0, len(time) - 1, valinit=0, valstep=1)
-
     def update(val):
-        index = int(slider.val)
 
+        index = int(slider.val)
         GG.set_segments([np.array([[0, 0, 0], sim.satellite.gg_torque_history[index]])])
         MAG.set_segments([np.array([[0, 0, 0], sim.satellite.mag_torque_history[index]])])
-
-        ax.set_title('Vectors in 3D Space at Time: {:.2f}'.format(time[index]))
+        SRP.set_segments([np.array([[0, 0, 0], sim.satellite.srp_torque_history[index]])])
+        TOTAL.set_segments([np.array([[0, 0, 0], sim.satellite.torque_history[index]])])
+        
+        #ax.set_title('Vectors in 3D Space at Time: {:.2f}'.format(time[index]))
+        ax.set_title('SRP Vector size: {}'.format(np.linalg.norm(sim.satellite.srp_torque_history[index])))
         fig.canvas.draw_idle()
 
     slider.on_changed(update)
