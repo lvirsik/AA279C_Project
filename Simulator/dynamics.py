@@ -40,10 +40,12 @@ def rotational_dynamics(state, satellite, t, dt):
     gg_torque = get_gravGrad_Torque(state, satellite)
     m_torque = get_magnetic_Torque(state, satellite, t)
     srp_torque = get_SRP_torque(state, satellite, t)
+    drag_torque = get_drag_torque(state, satellite, t)
     satellite.gg_torque_history = np.vstack((satellite.gg_torque_history, gg_torque))
     satellite.mag_torque_history = np.vstack((satellite.mag_torque_history, m_torque))
     satellite.srp_torque_history = np.vstack((satellite.srp_torque_history, srp_torque))
-    torque = gg_torque + m_torque + srp_torque
+    satellite.drag_torque_history = np.vstack((satellite.drag_torque_history, drag_torque))
+    torque = gg_torque + m_torque + srp_torque + drag_torque
     satellite.torque_history = np.vstack((satellite.torque_history, torque))
     
     # Euler Equations
