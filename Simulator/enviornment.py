@@ -57,3 +57,29 @@ def get_SRP_torque(state, satellite, t):
     
     return torque
     
+def get_drag_torque(state, satellite, t):
+    torque = np.array([0.0,0.0,0.0])
+    Cdrag = satellite.Cdrag
+    rho = rho_at_altitude(state)
+    v = np.linalg.norm(state[3:6])
+    v_unit_JCI = normalize_vector(state[3:6])
+    R = q2R(state[6:10])
+    v_unit = np.dot(np.linalg.inv(R), v_unit_JCI)
+    for i in range(len(satellite.surfaces)):
+        A = satellite.surfaces[i, 3]
+        N = satellite.surfaces[i, 4:7]
+        force = -0.5 * Cdrag * rho * (v**2) * (np.dot(v_unit, N)) * v_unit * A
+        r_2_COM = satellite.surfaces[i, 0:3]
+
+        if np.dot(v_unit, N) < 0:
+            e = 0
+        else:
+            e = 1
+        torque += np.cross(r_2_COM, e * force)
+    return torque
+        
+        
+def rho_at_altitude(state):
+    r = np.linalg.norm(state[0:3])
+    rho = SURF_RHO * np.exp((SURF_ACC * HYDROGEN_MASS / (BOLTZMAN_CONST * TEMP_AROUND_JUPITER)) * -(r-R_JUPITER))
+    return rho

@@ -23,10 +23,13 @@ class Satellite:
         self.Cs = Cs
         self.Cd = Cd
         self.Ca = Ca
+        
+        self.Cdrag = COEFF_DRAG
 
         self.gg_torque_history = np.zeros((1, 3))
         self.mag_torque_history = np.zeros((1, 3))
         self.srp_torque_history = np.zeros((1,3))
+        self.drag_torque_history = np.zeros((1,3))
         self.torque_history = np.zeros((1,3))
         
     def calculate_R(self):

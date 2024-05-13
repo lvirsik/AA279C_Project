@@ -21,6 +21,9 @@ NUM_COILS = 100
 CURRENT = 2 #A
 SURF_IN_COIL = 2 #m^2
 
+#Cdrag of Surfaces
+COEFF_DRAG = 0.01
+
 # First 3 columns is the coordinates of the centroids of each surface in body frame. Columns 4 is the surface area of each surface. Columns 5,6,7 is the unit vector normal to each surface.
 SURFACES = np.array([[0,	0,	0.3250,	2.2500,	0,	0,	-1.0000],
 [0,	0.7500,	0,	0.9750,	0,	1.0000,	0],
