@@ -16,6 +16,17 @@ ROTOR_SPEED = 10 #rad/s
 ROTOR_DIRECTION = np.array([0,1,0])
 I_ROTOR = 100
 
+# Sensor
+SENSOR_MASS = 0
+SENSOR_BIAS = 0
+SENSOR_NOISE = 0
+SENSOR_TYPE = [
+        "Sun Sensor",
+        "Star Tracker",
+        "Gyroscope",
+        "Magnetometer"
+    ]
+
 # Magnetic Moment
 NUM_COILS = 100
 CURRENT = 2 #A
