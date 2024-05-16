@@ -73,11 +73,13 @@ def stat_ad(sat, state):
     S = B + B.T
     Z = np.array([[B[1,2] - B[2,1], B[2, 0] - B[0, 2], B[0, 1] - B[1, 0]]]).T
     sigma = np.trace(B)
-    K = np.array([[S - np.identity(3)*sigma, Z], [Z.T, sigma]])
+    K = np.vstack([np.hstack([S- np.identity(3)*sigma, Z]), np.hstack([Z.T, np.array([[sigma]])])])
 
     value, vector = np.linalg.eig(K)
 
     attitude = vector
+    attitude = R2q(attitude)
+    print(attitude)
     return attitude
 
 # Replicate Gyreoscope and the integration of its data
