@@ -33,6 +33,7 @@ def runSIM():
 
     # Use Trajectory as oracle / reference motion to calculate estimated trajectory
     estimated_rot_trajectory = sim.state_estimation_history
+    estimated_vel_history = sim.imuVel_history
     #print(estimated_rot_trajectory)
 
     # Plots
@@ -44,5 +45,6 @@ def runSIM():
     # plot_orbit(trajectory)
     # plot_torque(trajectory, sim.satellite)
     plot_attitude_estimation(estimated_rot_trajectory, trajectory)
+    plot_attitude_estimation(estimated_vel_history, trajectory)
 
 runSIM()

@@ -60,7 +60,8 @@ class Sensor:
             return star_direction
         
         if (self.type == "Gyroscope"):
-            noisy_observation = current_rot + noise
+            current_w = current_state[10:13]
+            noisy_observation = current_w + noise
             return noisy_observation
           
         else:

@@ -31,7 +31,6 @@ def determ_ad(sat, state):
 
     attitude = np.matmul(M, np.linalg.inv(V)) # Rotation matrix question mark? 
     attitude = R2q(attitude)
-    print(attitude)
     return attitude
 
 def determ_ad_ficttious(sat, traj):
@@ -49,7 +48,7 @@ def determ_ad_ficttious(sat, traj):
     return attitude
 
 def stat_ad(sat, state):
-    observations = np.zeros(3,4)
+    observations = np.zeros((3,4))
     observations[:,0] = sat.starTracker1.get_sensor_observation(state).T
     observations[:,1] = sat.starTracker2.get_sensor_observation(state).T
     observations[:,2] = sat.sunSensor1.get_sensor_observation(state).T
@@ -63,31 +62,32 @@ def stat_ad(sat, state):
     sun_direction = normalize_vector(SAT2SUN)
     SAT2STAR = current_pos + JUPITER2STAR
     star_direction = normalize_vector(SAT2STAR)
-
     SAT2STAR2 = current_pos + JUPITER2STAR2
     star_direction2 = normalize_vector(SAT2STAR2)
-
     reference_direction = np.stack((star_direction, star_direction2, sun_direction, sun_direction), axis = 1)
 
-    M = np.matmul(observations, reference_direction.T)
-    V = np.matmul(reference_direction, reference_direction.T)
-
-    attitude = np.matmul(M, np.linalg.inv(V)) # Rotation matrix question mark? 
-
     weights = [10, 10, 1, 1]
-    residual = observations - np.dot(attitude, reference_direction) 
-    cost_function = sum(weights * residual)
+    W = np.sqrt(weights) * observations
+    U = np.sqrt(weights) * reference_direction
+    B = np.matmul(W, U.T)
+    S = B + B.T
+    Z = np.array([[B[1,2] - B[2,1], B[2, 0] - B[0, 2], B[0, 1] - B[1, 0]]]).T
+    sigma = np.trace(B)
+    K = np.array([[S - np.identity(3)*sigma, Z], [Z.T, sigma]])
 
-   
+    value, vector = np.linalg.eig(K)
 
-    attitude = 0
+    attitude = vector
     return attitude
 
 # Replicate Gyreoscope and the integration of its data
-def ang_vel_ad(sat, traj):
-    observations = np.zeros(4,3)
-    observations[0,:] = sat.imu1.get_sensor_observation(traj)
-    observations[1,:] = sat.imu2.get_sensor_observation(traj)
+def ang_vel_ad(sat, state):
+    observations = np.zeros((2,3))
+    observations[0,:] = sat.imu1.get_sensor_observation(state)
+    observations[1,:] = sat.imu2.get_sensor_observation(state)
+    current_w = np.mean(observations, axis = 0)
 
-    attitude = 0
+    current_q = state[6:10]
+    q_rate = qdot(current_q, current_w)
+    attitude = current_q + TIMESTEP * q_rate
     return attitude
