@@ -1,6 +1,7 @@
 from Vehicle.satelliteConstants import *
 from Simulator.util import *
 from Vehicle.rotor import *
+from Vehicle.sensor import *
 from Simulator.enviornmentConstants import *
 import numpy as np
 
@@ -18,6 +19,14 @@ class Satellite:
         
         # Initialize Rotor
         #self.rotor = Rotor()
+
+        # Initialize Sensors (We have 2 star trackers, sun seonsrs and IMUs) True = ideal, False = not ideal
+        self.starTracker1 = Sensor("Star Tracker", True)
+        self.starTracker2 = Sensor("Star Tracker", True)
+        self.sunSensor1 = Sensor("Sun Sensor", True)
+        self.sunSensor2 = Sensor("Sun Sensor", True)
+        self.imu1 = Sensor("Gyroscope", True)
+        self.imu2 = Sensor("Gyroscope", True)
 
         self.surfaces = SURFACES
         self.Cs = Cs
