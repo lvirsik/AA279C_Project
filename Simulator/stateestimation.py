@@ -14,25 +14,24 @@ def determ_ad(sat, state):
     # Get reference directions
     current_state = state # The reference or oracle state (The Dynamics / Predicted Motion)
     current_pos = current_state[0:3] # 3D Vector in ECI? (JCI?)
-    current_rot = current_state[6:10] # Quaternions
     
     SAT2SUN = current_pos + JUPITER2SUN
     sun_direction = normalize_vector(SAT2SUN)
     SAT2STAR = current_pos + JUPITER2STAR
     star_direction = normalize_vector(SAT2STAR)
 
-    #SAT2STAR2 = current_pos + JUPITER2STAR2
-    # star_direction2 = normalize_vector(SAT2STAR2)
+    SAT2STAR2 = current_pos + JUPITER2STAR2
+    star_direction2 = normalize_vector(SAT2STAR2)
 
-    reference_direction = np.stack((star_direction, star_direction, sun_direction, sun_direction), axis = 0).T
+    reference_direction = np.stack((star_direction, star_direction2, sun_direction, sun_direction), axis = 1)
 
     # Since we have more then 3 measurements, we have a non sqaure matrix and cant take inverse and thus need to make them square
     M = np.matmul(observations, reference_direction.T)
     V = np.matmul(reference_direction, reference_direction.T)
-    print(V)
 
-    attitude = np.matmul(M, np.linalg.inv(V)) # Rotation matrix question mark?
+    attitude = np.matmul(M, np.linalg.inv(V)) # Rotation matrix question mark? 
     attitude = R2q(attitude)
+    print(attitude)
     return attitude
 
 def determ_ad_ficttious(sat, traj):
@@ -49,14 +48,37 @@ def determ_ad_ficttious(sat, traj):
     attitude = np.matmul(M, np.linalg.inv(V))
     return attitude
 
-def stat_ad(sat, traj):
-    observations = np.zeros(4,4)
-    observations[0,:] = sat.starTracker1.get_sensor_observation(traj)
-    observations[1,:] = sat.starTracker2.get_sensor_observation(traj)
-    observations[2,:] = sat.sunSensor1.get_sensor_observation(traj)
-    observations[3,:] = sat.sunSensor2.get_sensor_observation(traj)
+def stat_ad(sat, state):
+    observations = np.zeros(3,4)
+    observations[:,0] = sat.starTracker1.get_sensor_observation(state).T
+    observations[:,1] = sat.starTracker2.get_sensor_observation(state).T
+    observations[:,2] = sat.sunSensor1.get_sensor_observation(state).T
+    observations[:,3] = sat.sunSensor2.get_sensor_observation(state).T
 
-    weights = np.zeros(4,3)
+    # Get reference directions
+    current_state = state # The reference or oracle state (The Dynamics / Predicted Motion)
+    current_pos = current_state[0:3] # 3D Vector in ECI? (JCI?)
+    
+    SAT2SUN = current_pos + JUPITER2SUN
+    sun_direction = normalize_vector(SAT2SUN)
+    SAT2STAR = current_pos + JUPITER2STAR
+    star_direction = normalize_vector(SAT2STAR)
+
+    SAT2STAR2 = current_pos + JUPITER2STAR2
+    star_direction2 = normalize_vector(SAT2STAR2)
+
+    reference_direction = np.stack((star_direction, star_direction2, sun_direction, sun_direction), axis = 1)
+
+    M = np.matmul(observations, reference_direction.T)
+    V = np.matmul(reference_direction, reference_direction.T)
+
+    attitude = np.matmul(M, np.linalg.inv(V)) # Rotation matrix question mark? 
+
+    weights = [10, 10, 1, 1]
+    residual = observations - np.dot(attitude, reference_direction) 
+    cost_function = sum(weights * residual)
+
+   
 
     attitude = 0
     return attitude
