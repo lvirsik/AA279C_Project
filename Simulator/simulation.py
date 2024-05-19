@@ -3,6 +3,7 @@ import scipy.integrate
 import copy
 from Simulator.simulationConstants import *
 from Simulator.dynamics import *
+from Simulator.stateestimation import *
 from Vehicle.satellite import Satellite
 
 class Simulation:
@@ -29,6 +30,9 @@ class Simulation:
         self.R_history = np.array([q2R(self.state[6:10])])
         self.R_prin_history = np.expand_dims(np.dot(self.R_history[0], self.satellite.R), axis=0)
         self.RTN_history = np.expand_dims(calculate_RTN(self.state), axis=0)
+        self.state_estimation_history = np.array(determ_ad(self.satellite, self.state))
+        self.imuVel_history = np.array(ang_vel_ad(self.satellite, self.state))
+        self.stat_SE_history = np.array(stat_ad(self.satellite, self.state))
         
         self.statedot = (orbital_dynamics(self.state[0:6]), rotational_dynamics(self.state, self.satellite, 0, self.ts))
 
@@ -79,6 +83,9 @@ class Simulation:
             self.R_history = np.vstack((self.R_history, np.expand_dims(q2R(state[6:10]).T, axis=0)))
             self.R_prin_history = np.vstack((self.R_prin_history, np.expand_dims(np.dot(self.satellite.R, self.R_history[-1]), axis=0)))
             self.RTN_history = np.vstack((self.RTN_history, np.expand_dims(calculate_RTN(self.state).T, axis=0)))
+            self.state_estimation_history = np.vstack((self.state_estimation_history, determ_ad(self.satellite, self.state)))
+            self.imuVel_history = np.vstack((self.imuVel_history, ang_vel_ad(self.satellite, self.state)))
+            self.stat_SE_history = np.vstack((self.stat_SE_history, stat_ad(self.satellite, self.state)))
             
             self.statedot = (orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, t, self.ts))
 

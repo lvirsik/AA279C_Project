@@ -43,3 +43,34 @@ def plot_error_over_time(trajectory, ideal_trajectory, sim):
     # Adjust the layout
     plt.tight_layout()
     plt.show()
+
+def plot_attitude_estimation(estimated_trajectory, actual_trajectory):
+    attitude_history = actual_trajectory[:, 6:10]
+    estimated_attitude_history = estimated_trajectory
+
+    # Create a figure for the rotational dynamics plots
+    fig, axs = plt.subplots(2, 4, figsize=(15, 10))
+
+    # Define the names for the rotational dynamics plots
+    attitude_plot_names = [
+        "Q0",
+        "Q1",
+        "Q2",
+        "Q3",
+        "Estimated Q0",
+        "Estimated Q1",
+        "Estimated Q2",
+        "Estimated Q3",
+    ]
+
+    # Plot the rotational dynamics
+    for i in range(4):
+        axs[0, i].plot(attitude_history[:, i])
+        axs[0, i].set_title(attitude_plot_names[i])
+    for i in range(4):
+        axs[1, i].plot(estimated_attitude_history[:, i])
+        axs[1, i].set_title(attitude_plot_names[i+4])
+    
+    # Adjust the layout
+    plt.tight_layout()
+    plt.show()

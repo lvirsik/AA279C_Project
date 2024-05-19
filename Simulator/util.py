@@ -234,3 +234,12 @@ def angles_between_matrix(matrix_1, matrix_2):
 
         angles.append(angle_rad)
     return angles
+
+def match_quaternion_signs(q1,q2):
+    sign_q1_scalar = np.sign(q1)
+    sign_q2_scalar = np.sign(q2)
+    sign_q1_scalar[sign_q1_scalar == 0] = 1
+    sign_q2_scalar[sign_q2_scalar == 0] = 1
+    q2_matched = q2 * (sign_q1_scalar * sign_q2_scalar)
+
+    return q2_matched
