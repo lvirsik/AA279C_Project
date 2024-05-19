@@ -8,8 +8,8 @@ class Sensor:
         self.mass = SENSOR_MASS
         self.type = type
         self.ideal = ideal_bool # Introudce bias and noise or not
-        self.bias = 0
-        self.noise = 0
+        self.bias = 0.1
+        self.noise = 0.1
         self.star_num = star_num
 
         if (self.ideal == True):
@@ -37,8 +37,7 @@ class Sensor:
         current_state = state 
         current_pos = current_state[0:3] # 3D Vector in ECI? (JCI?)
         current_rot = current_state[6:10] # Quaternions
-        Inertial2Body = q2R(current_rot)
-
+        Inertial2Body = np.linalg.inv(q2R(current_rot))
         guassian_sd = self.noise
         noise = np.random.normal(0, guassian_sd, np.shape(current_pos))
 

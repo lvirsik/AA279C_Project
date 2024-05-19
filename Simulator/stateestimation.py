@@ -2,6 +2,7 @@ import numpy as np
 from Vehicle.satelliteConstants import *
 from Simulator.simulationConstants import *
 from Simulator.dynamics import *
+import scipy
 
 def determ_ad(sat, state):
     # Get observation / measurements
@@ -65,21 +66,22 @@ def stat_ad(sat, state):
     SAT2STAR2 = current_pos + JUPITER2STAR2
     star_direction2 = normalize_vector(SAT2STAR2)
     reference_direction = np.stack((star_direction, star_direction2, sun_direction, sun_direction), axis = 1)
-
-    weights = [10, 10, 1, 1]
+    
+    # CORRECT UNTIL HERE
+    weights = [1, 1, 1, 1]
     W = np.sqrt(weights) * observations
     U = np.sqrt(weights) * reference_direction
-    B = np.matmul(W, U.T)
+    B = W @ U.T
     S = B + B.T
     Z = np.array([[B[1,2] - B[2,1], B[2, 0] - B[0, 2], B[0, 1] - B[1, 0]]]).T
     sigma = np.trace(B)
-    K = np.vstack([np.hstack([S- np.identity(3)*sigma, Z]), np.hstack([Z.T, np.array([[sigma]])])])
+    K = np.vstack([np.hstack([S - np.identity(3)*sigma, Z]), np.hstack([Z.T, np.array([[sigma]])])])
 
-    value, vector = np.linalg.eig(K)
-
-    attitude = vector
-    attitude = R2q(attitude)
-    print(attitude)
+    value, vector = np.linalg.eigh(K)
+    attitude = vector[:,-1]
+    
+    ## CORRECT AFTER HERE
+    attitude = match_quaternion_signs(state[6:10], attitude)
     return attitude
 
 # Replicate Gyreoscope and the integration of its data
