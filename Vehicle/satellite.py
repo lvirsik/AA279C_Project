@@ -21,12 +21,12 @@ class Satellite:
         #self.rotor = Rotor()
 
         # Initialize Sensors (We have 2 star trackers, sun seonsrs and IMUs) True = ideal, False = not ideal
-        self.starTracker1 = Sensor("Star Tracker", True, 1)
-        self.starTracker2 = Sensor("Star Tracker", True, 2)
-        self.sunSensor1 = Sensor("Sun Sensor", True, 1)
-        self.sunSensor2 = Sensor("Sun Sensor", True, 1)
-        self.imu1 = Sensor("Gyroscope", True, 1)
-        self.imu2 = Sensor("Gyroscope", True, 1)
+        self.starTracker1 = Sensor("Star Tracker", False, 1)
+        self.starTracker2 = Sensor("Star Tracker", False, 2)
+        self.sunSensor1 = Sensor("Sun Sensor", False, 1)
+        self.sunSensor2 = Sensor("Sun Sensor", False, 1)
+        self.imu1 = Sensor("Gyroscope", False, 1)
+        self.imu2 = Sensor("Gyroscope", False, 1)
 
         self.surfaces = SURFACES
         self.Cs = Cs

@@ -8,8 +8,8 @@ class Sensor:
         self.mass = SENSOR_MASS
         self.type = type
         self.ideal = ideal_bool # Introudce bias and noise or not
-        self.bias = 0.1
-        self.noise = 0.1
+        self.bias = 0.0
+        self.noise = 0.0
         self.star_num = star_num
 
         if (self.ideal == True):
@@ -25,29 +25,32 @@ class Sensor:
                 self.noise = SUN_SENSOR_NOISE
         
             if (self.type == "Star Tracker"):
-                self.bias = STAR_TRACKER_NOISE
-                self.noise = STAR_TRACKER_BIAS
+                self.bias = STAR_TRACKER_BIAS
+                self.noise = STAR_TRACKER_NOISE
         
             if (self.type == "Gyroscope"):
-                self.bias = IMU_NOISE
-                self.noise = IMU_BIAS
+                self.bias = IMU_BIAS
+                self.noise = IMU_NOISE
 
     # Returns a singular estimated rotation observation at a given time
     def get_sensor_observation(self, state):
         current_state = state 
         current_pos = current_state[0:3] # 3D Vector in ECI? (JCI?)
         current_rot = current_state[6:10] # Quaternions
-        Inertial2Body = np.linalg.inv(q2R(current_rot))
+        Inertial2Body = np.linalg.inv(q2R(current_rot))#
+
+        # Different for each type of sensors
         guassian_sd = self.noise
-        noise = np.random.normal(0, guassian_sd, np.shape(current_pos))
+        guassian_bias = self.bias
+        noise = np.random.normal(guassian_bias, guassian_sd, np.shape(current_pos))
 
         if (self.type == "Sun Sensor"):
             SAT2SUN = current_pos + JUPITER2SUN
             sun_direction = normalize_vector(SAT2SUN)
             sun_direction = np.dot(Inertial2Body, sun_direction) # We need it in body frame
             noisy_sun = sun_direction + noise
-            return sun_direction
-        
+            return noisy_sun
+         
         if (self.type == "Star Tracker"):
             if (self.star_num == 1):
                 SAT2STAR = current_pos + JUPITER2STAR
@@ -56,7 +59,7 @@ class Sensor:
             star_direction = normalize_vector(SAT2STAR)
             star_direction = np.dot(Inertial2Body, star_direction) # We need it in body frame
             noisy_star = star_direction + noise
-            return star_direction
+            return noisy_star
         
         if (self.type == "Gyroscope"):
             current_w = current_state[10:13]

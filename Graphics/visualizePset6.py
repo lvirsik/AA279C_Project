@@ -49,7 +49,7 @@ def plot_attitude_estimation(estimated_trajectory, actual_trajectory):
     estimated_attitude_history = estimated_trajectory
 
     # Create a figure for the rotational dynamics plots
-    fig, axs = plt.subplots(2, 4, figsize=(15, 10))
+    fig, axs = plt.subplots(3, 4, figsize=(15, 10))
 
     # Define the names for the rotational dynamics plots
     attitude_plot_names = [
@@ -61,7 +61,15 @@ def plot_attitude_estimation(estimated_trajectory, actual_trajectory):
         "Estimated Q1",
         "Estimated Q2",
         "Estimated Q3",
+        "Q0 Error",
+        "Q1 Error",
+        "Q2 Error",
+        "Q3 Error"
     ]
+
+    attitude_error_history = attitude_history - estimated_attitude_history[1:len(estimated_attitude_history)]
+   # for i in range(len(attitude_error_history)):
+        #attitude_error_history[i] =  match_quaternion_signs(attitude_error_history[i], attitude_history)
 
     # Plot the rotational dynamics
     for i in range(4):
@@ -70,6 +78,9 @@ def plot_attitude_estimation(estimated_trajectory, actual_trajectory):
     for i in range(4):
         axs[1, i].plot(estimated_attitude_history[:, i])
         axs[1, i].set_title(attitude_plot_names[i+4])
+    for i in range(4):
+        axs[2, i].plot(attitude_error_history[:, i])
+        axs[2, i].set_title(attitude_plot_names[i+8])
     
     # Adjust the layout
     plt.tight_layout()
