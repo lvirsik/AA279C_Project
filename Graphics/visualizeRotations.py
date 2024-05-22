@@ -59,3 +59,58 @@ def plot_euler(trajectory, sim, frame='pf'):
     # Adjust the layout
     plt.tight_layout()
     plt.show()
+    
+def plot_kalman(state_history, kalman_state_history):
+
+    # Number of time steps
+    time_steps = state_history.shape[0]
+
+    # Time array for x-axis
+    time = np.arange(time_steps)
+
+    # Create the first figure for the first 6 variables
+    fig1, axs1 = plt.subplots(3, 2, figsize=(12, 8))
+    fig1.suptitle('Position and Velocity')
+
+    names = ["X Position",
+             "Y Position",
+             "Z Position",
+             "X Velocity",
+             "Y Velocity",
+             "Z Velocity"]
+    
+    for i in range(6):
+        ax = axs1[i // 2, i % 2]
+        ax.plot(time, state_history[:, i], label='State {}'.format(names[i]))
+        ax.plot(time, kalman_state_history[:, i], label='Kalman State {}'.format(names[i]))
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Value')
+        ax.legend()
+        ax.grid(True)
+
+    # Create the second figure for the last 7 variables
+    fig2, axs2 = plt.subplots(4, 2, figsize=(12, 10))
+    fig2.suptitle('Quaternions and Angular Velocity Vector')
+
+    names = ["Q0",
+             "Q1",
+             "Q2",
+             "Q3",
+             "Wx",
+             "Wy",
+             "Wz"]
+
+    for i in range(7):
+        ax = axs2[i // 2, i % 2]
+        ax.plot(time, state_history[:, i + 6], label='State {}'.format(names[i]))
+        ax.plot(time, kalman_state_history[:, i + 6], label='Kalman State {}'.format(names[i]))
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Value')
+        ax.legend()
+        ax.grid(True)
+
+    # Hide the empty subplot in the second figure
+    fig2.delaxes(axs2[3, 1])
+
+    # Show the plots
+    plt.show()

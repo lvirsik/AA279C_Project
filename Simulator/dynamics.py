@@ -4,6 +4,7 @@ from Simulator.util import *
 from Graphics.visualizeEllipsoids import *
 from Simulator.enviornment import *
 import cmath
+import copy
 
 def orbital_dynamics(ECI):
     rECI = ECI[0:3]
@@ -103,5 +104,34 @@ def axially_symmetric_analytical_solution(t, I, state_initial):
     
     return np.array([wx, wy, wz])
 
+def state_space_dynamics_wrapper(state, satellite, t, dt, u):
+    positional_state = orbital_dynamics(state[0:6])
+    rotational_state = rotational_dynamics(state, satellite, t, dt)
+    return np.hstack((positional_state, rotational_state))
 
+def compute_A(state, u, satellite, t, dt):
+    h = 0.0001
+    jacobian = np.zeros((len(state), len(state)))
+    for i in range(len(state)):
+        state_plus = copy.copy(state).astype(float)
+        state_minus = copy.copy(state).astype(float)
+        state_plus[i] = state_plus[i] + h
+        state_minus[i] = state_minus[i] - h
+        statedot_plus = state_space_dynamics_wrapper(state_plus, satellite, t, dt, u)
+        statedot_minus = state_space_dynamics_wrapper(state_minus, satellite, t, dt, u)
+        jacobian[i] = (statedot_plus - statedot_minus) / (2 * h)
+    return jacobian.T
+
+def compute_B(state, u, satellite, t, dt):
+    h = 0.0001
+    jacobian = np.zeros((len(u), len(state)))
+    for i in range(len(u)):
+        u_plus = copy.copy(u).astype(float)
+        u_minus = copy.copy(u).astype(float)
+        u_plus[i] = u[i] + h
+        u_minus[i] = u[i] - h
+        statedot_plus = state_space_dynamics_wrapper(state, satellite, t, dt, u)
+        statedot_minus = state_space_dynamics_wrapper(state, satellite, t, dt, u)
+        jacobian[i] = (statedot_plus - statedot_minus) / (2 * h)
+    return jacobian.T
     

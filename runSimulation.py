@@ -26,20 +26,12 @@ def runSIM():
     # Combine and set up sim
     initial_state = np.concatenate((initial_cartesian_state, initial_Q, initial_w))
     sim = Simulation(FINAL_TIME, TIMESTEP, initial_state)
-
+    
     # Run Simulation (Rotations)
     trajectory = sim.propogate()
-    #print(trajectory[:, 6:10])
-
-    # Use Trajectory as oracle / reference motion to calculate estimated trajectory
-    estimated_rot_trajectory = sim.state_estimation_history
-    estimated_vel_history = sim.imuVel_history
-    estimated_stat_SE = sim.stat_SE_history
-    #print(estimated_rot_trajectory)
-
     # Plots
     # plot_euler(trajectory, sim)
-    # plot_error_over_time(trajectory, ideal_trajectory, sim)
+    plot_error_over_time(trajectory, ideal_trajectory, sim)
     # plot_frames_over_time(sim)
     # plot_torques_over_time(sim)
 
@@ -47,6 +39,7 @@ def runSIM():
     # plot_torque(trajectory, sim.satellite)
     # plot_attitude_estimation(estimated_rot_trajectory, trajectory)
     # plot_attitude_estimation(estimated_vel_history, trajectory)
-    plot_attitude_estimation(estimated_stat_SE, trajectory)
+    #plot_attitude_estimation(estimated_stat_SE, trajectory)
+    plot_kalman(sim.state_history, sim.kalman_state_history, sim.sensed_state_history)
 
 runSIM()

@@ -33,7 +33,7 @@ class Sensor:
                 self.noise = IMU_BIAS
 
     # Returns a singular estimated rotation observation at a given time
-    def get_sensor_observation(self, state):
+    def reading(self, state):
         current_state = state 
         current_pos = current_state[0:3] # 3D Vector in ECI? (JCI?)
         current_rot = current_state[6:10] # Quaternions
