@@ -160,9 +160,22 @@ def q2R(q):
 
     R = np.array([[m00, m01, m02],
                   [m10, m11, m12],
-                  [m20, m21, m22]])
+                  [m20, m21, m22]]) 
     
     return R
+
+
+def Q2R_smallAngle(Q):
+    theta_x = Q[0] / 2
+    theta_y = Q[1] / 2
+    theta_z = Q[2] / 2
+
+    R_SA = np.array([[1, -theta_z, theta_y ],
+                    [theta_z, 1, -theta_x],
+                    [-theta_y, theta_x, 1]])
+    
+    return R_SA
+
 
 def R2EAs(R):
     sy = math.sqrt(R[0,0]*R[0,0] + R[1,0]*R[1,0])

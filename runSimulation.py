@@ -10,6 +10,7 @@ from Graphics.visualizeEllipsoids import *
 from Graphics.visualizePset3 import *
 from Graphics.visualizePset4_4 import *
 from Graphics.visualizePset6 import *
+from Graphics.visualizePset7 import *
 
 def runSIM():
     
@@ -48,5 +49,6 @@ def runSIM():
     # plot_attitude_estimation(estimated_rot_trajectory, trajectory)
     # plot_attitude_estimation(estimated_vel_history, trajectory)
     plot_attitude_estimation(estimated_stat_SE, trajectory)
+    plot_small_angle_quaternion_conversion(estimated_stat_SE, trajectory)
 
 runSIM()

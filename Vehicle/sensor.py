@@ -58,6 +58,8 @@ class Sensor:
                 SAT2STAR = current_pos + JUPITER2STAR2
             star_direction = normalize_vector(SAT2STAR)
             star_direction = np.dot(Inertial2Body, star_direction) # We need it in body frame
+
+
             noisy_star = star_direction + noise
             return noisy_star
         
@@ -85,10 +87,50 @@ class Sensor:
         
         if (self.type == "Gyroscope"):
             return noisy_rot_history
-    
         
         else:
             print("Bad Sensor Name Input")
+
+    def SunSensor_hardwaremodel(self, sun_vector):
+        
+        alpha = 0 # From Manufacturer
+        S = 0 # From Manufacturer
+        theta = 0 
+        I = alpha * S * np.cos(theta)
+
+        guassian_sd = self.noise
+        guassian_bias = self.bias
+        noise = np.random.normal(guassian_bias, guassian_sd, np.shape(I))
+
+        return 0
+    
+    def StarTracker_hardwaremodel(self, x_ccd, y_ccd):
+
+        # Camera intrinsic parameters
+        f = STARTRACKER_FOCAL 
+        x0, y0 = STARTRACKER_CENTROID
+        dy, dx = STARTRACKER_PIXEL
+        k = STARTRACKER_DISTORTION
+
+        xdotdot = x_ccd - x0
+        ydotdot = y_ccd - y0
+
+        xdot = xdotdot
+        ydot = ydotdot * (dy/dx) #Length of pixel along y and along x
+
+        ddot = np.sqrt(xdot**2 + ydot**2)
+
+        x = (1 + k*ddot**2) * xdot
+        y = (1 + k*ddot**2) * ydot
+
+        # Vector from centroid (of image plane) to pinhole
+        r_hat = np.linalg.norm(np.array([x, y, f]))
+
+        return r_hat
+    
+    def IMU_hardwaremodel(self):
+        return 0
+
         
         
         

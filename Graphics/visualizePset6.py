@@ -67,9 +67,8 @@ def plot_attitude_estimation(estimated_trajectory, actual_trajectory):
         "Q3 Error"
     ]
 
+    # FOR PSET 7 PLOTTING ERROR BETWEEN ESTIMATED AND ACTUAL
     attitude_error_history = attitude_history - estimated_attitude_history[1:len(estimated_attitude_history)]
-   # for i in range(len(attitude_error_history)):
-        #attitude_error_history[i] =  match_quaternion_signs(attitude_error_history[i], attitude_history)
 
     # Plot the rotational dynamics
     for i in range(4):
