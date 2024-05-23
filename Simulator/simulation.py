@@ -6,10 +6,14 @@ from Simulator.dynamics import *
 from Simulator.stateestimation import *
 from Vehicle.satellite import Satellite
 from Vehicle.kalmanFilter import *
+import tqdm
 
 class Simulation:
     """ Class Representing the Simulation and associated data"""
     def __init__(self, timefinal, simulation_timestep, starting_state):
+        
+        # Progress bar 
+        self.pbar = tqdm.tqdm(total=timefinal, desc="Simulation Progress")
         
         # Create Rocket Object
         self.satellite = Satellite()
@@ -64,6 +68,7 @@ class Simulation:
         solution = scipy.integrate.solve_ivp(self.wrapper_state_to_stateDot, t, state, 
                                              args=(self.satellite, t_span), t_eval=t_span, max_step=ts/5)
         state_history = solution['y'].T
+        self.pbar.close()
         return state_history
                             
     def wrapper_state_to_stateDot(self, t, state, satellite, t_vec):
@@ -71,16 +76,20 @@ class Simulation:
         # Check if we are on an actual simulation timestep or if this is ode solving shenanigans
         
         if (t == 0) or (t >= t_vec[self.current_step] and self.previous_time < t_vec[self.current_step]):
+            self.pbar.update(t - self.pbar.n)
+            self.pbar.refresh()
+            
             # Ensure q is normalized
             state[6:10] = normalize_vector(state[6:10])
-            #print(q2R(state[6:10]))
+
             self.state = state
             if not t == t_vec[-1]:
                 self.current_step += 1
             self.previous_time = t
+            
             # Run Checks on accuracy of situation and physical constraints
             self.checks()
-            print(t)
+            
             # create history arrays
             self.w_inertial_history = np.vstack((self.w_inertial_history, calculate_w_inertial(self.satellite, state)[0:3]))
             self.R_history = np.vstack((self.R_history, np.expand_dims(q2R(state[6:10]).T, axis=0)))

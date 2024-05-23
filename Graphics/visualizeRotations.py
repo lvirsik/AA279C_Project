@@ -60,7 +60,7 @@ def plot_euler(trajectory, sim, frame='pf'):
     plt.tight_layout()
     plt.show()
     
-def plot_kalman(state_history, kalman_state_history):
+def plot_kalman(state_history, kalman_state_history, sensed_state_history):
 
     # Number of time steps
     time_steps = state_history.shape[0]
@@ -81,8 +81,8 @@ def plot_kalman(state_history, kalman_state_history):
     
     for i in range(6):
         ax = axs1[i // 2, i % 2]
-        ax.plot(time, state_history[:, i], label='State {}'.format(names[i]))
-        ax.plot(time, kalman_state_history[:, i], label='Kalman State {}'.format(names[i]))
+        ax.plot(time, state_history[:, i], label='{}'.format(names[i]))
+        ax.plot(time, kalman_state_history[:, i], label='Kalman {}'.format(names[i]))
         ax.set_xlabel('Time')
         ax.set_ylabel('Value')
         ax.legend()
@@ -102,8 +102,16 @@ def plot_kalman(state_history, kalman_state_history):
 
     for i in range(7):
         ax = axs2[i // 2, i % 2]
-        ax.plot(time, state_history[:, i + 6], label='State {}'.format(names[i]))
-        ax.plot(time, kalman_state_history[:, i + 6], label='Kalman State {}'.format(names[i]))
+        ax.plot(time, state_history[:, i + 6], label=' {}'.format(names[i]))
+        ax.plot(time, kalman_state_history[:, i + 6], label='Kalman {}'.format(names[i]))
+        if i <= 4:
+            ax.plot(time, sensed_state_history[:, i], label='Star 1 {}'.format(names[i]))
+            ax.plot(time, sensed_state_history[:, i + 4], label='Star 2 {}'.format(names[i]))
+            ax.plot(time, sensed_state_history[:, i + 8], label='Sun 1 {}'.format(names[i]))
+            ax.plot(time, sensed_state_history[:, i + 12], label='Sun 2 {}'.format(names[i]))
+        if i > 4:
+            ax.plot(time, sensed_state_history[:, i + 12], label='Gyro 1 {}'.format(names[i]))
+            ax.plot(time, sensed_state_history[:, i + 15], label='Gyro 2 {}'.format(names[i]))
         ax.set_xlabel('Time')
         ax.set_ylabel('Value')
         ax.legend()
