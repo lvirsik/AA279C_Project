@@ -2,21 +2,15 @@ import numpy as np
 import math
 from Simulator.simulationConstants import *
 from Simulator.util import *
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 def kalman_filter(x, u, y, A, B, dt, P):
     """ Kalman filter"""
     # Calculate Process Noise Matrix
-    Q = np.eye(13)
-    # H assumes sensor format [q q q q w w]
+    Q = np.eye(13) *0.01
+    # H assumes sensor format [q q w w]
     H = np.array([
-        [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
@@ -33,7 +27,7 @@ def kalman_filter(x, u, y, A, B, dt, P):
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],    
     ]) 
   
-    R = np.eye(22)
+    R = np.eye(14)
     
     # Time Step
     x_next, P_next = predict_step(x, u, A, B, P, Q, dt)
@@ -73,8 +67,9 @@ def get_Y(satellite, state):
     # Sensor Readings
     st1 = satellite.starTracker1.reading(state)
     st2 = satellite.starTracker2.reading(state)
+    st3 = satellite.starTracker3.reading(state)
+    st4 = satellite.starTracker4.reading(state)
     su1 = satellite.sunSensor1.reading(state)
-    su2 = satellite.sunSensor2.reading(state)
     gry1 = satellite.imu1.reading(state)
     gry2 = satellite.imu2.reading(state)
     
@@ -82,19 +77,48 @@ def get_Y(satellite, state):
     R = q2R(state[6:10])
     
     # Get actual position of objects in sky
-    sat2sun = state[0:3] + JUPITER2SUN
-    sun_direction = np.dot(np.linalg.inv(R), normalize_vector(sat2sun)) # We need it in body frame
-    sat2star1 = state[0:3] + JUPITER2STAR
-    star1_direction = np.dot(np.linalg.inv(R), normalize_vector(sat2star1)) # We need it in body frame
-    sat2star2 = state[0:3] + JUPITER2STAR2
-    star2_direction = np.dot(np.linalg.inv(R), normalize_vector(sat2star2)) # We need it in body frame
+    sun_direction = normalize_vector(state[0:3] + JUPITER2SUN)
+    star1_direction = normalize_vector(state[0:3] + JUPITER2STAR)
+    star2_direction = normalize_vector(state[0:3] + JUPITER2STAR2)
+    star3_direction = normalize_vector(state[0:3] + JUPITER2STAR3)
+    star4_direction = normalize_vector(state[0:3] + JUPITER2STAR4)
+    
+    # Set up for conversion
+    V1 = np.array([star1_direction, star2_direction, sun_direction])
+    V2 = np.array([star4_direction, sun_direction, star2_direction])
+    B1 = np.array([st1, st2, su1])
+    B2 = np.array([st4, su1, st2])
     
     # Convert Measurements to Quaternions
-    st1_q = match_quaternion_signs(state[6:10], R2q(np.array([st1, star1_direction, np.cross(st1, star1_direction)])))
-    st2_q = match_quaternion_signs(state[6:10], R2q(np.array([st2, star2_direction, np.cross(st2, star2_direction)])))
-    su1_q = match_quaternion_signs(state[6:10], R2q(np.array([su1, sun_direction, np.cross(su1, sun_direction)])))
-    su2_q = match_quaternion_signs(state[6:10], R2q(np.array([su2, sun_direction, np.cross(su2, sun_direction)])))
+    V1_centroid = np.mean(V1, axis=0)
+    V2_centroid = np.mean(V2, axis=0)
+    B1_centroid = np.mean(B1, axis=0)
+    B2_centroid = np.mean(B2, axis=0)
+    V1_centered = V1 - V1_centroid
+    B1_centered = B1 - B1_centroid
+    V2_centered = V2 - V2_centroid
+    B2_centered = B2 - B2_centroid
+
+    H1 = V1_centered.T @ B1_centered
+    H2 = V2_centered.T @ B2_centered
+
+    U1, S1, Vt1 = np.linalg.svd(H1)
+    U2, S2, Vt2 = np.linalg.svd(H2)
+
+    R1 = Vt1.T @ U1.T
+    R2 = Vt2.T @ U2.T
+
+    # Handle the case where the determinant of R is -1 (reflection case)
+    if np.linalg.det(R1) < 0:
+        Vt1[2, :] *= -1
+        R1 = Vt1.T @ U1.T
+    if np.linalg.det(R2) < 0:
+        Vt2[2, :] *= -1
+        R2 = Vt2.T @ U2.T
+  
+    q1 = match_quaternion_signs(state[6:10], normalize_vector(R2q(R1)))
+    q2 = match_quaternion_signs(state[6:10], normalize_vector(R2q(R2)))
     
     # Stack and Send Back
-    Y = np.concatenate((st1_q, st2_q, su1_q, su2_q, gry1, gry2), axis=None)
+    Y = np.concatenate((q1, q2, gry1, gry2), axis=None)
     return Y

@@ -102,16 +102,14 @@ def plot_kalman(state_history, kalman_state_history, sensed_state_history):
 
     for i in range(7):
         ax = axs2[i // 2, i % 2]
+        if i <= 3:
+            ax.plot(time, sensed_state_history[:, i], label='Star 1, 2 {}'.format(names[i]))
+            ax.plot(time, sensed_state_history[:, i + 4], label='Star 3, 4 {}'.format(names[i]))
+        if i > 3:
+            ax.plot(time, sensed_state_history[:, i + 4], label='Gyro 1 {}'.format(names[i]))
+            ax.plot(time, sensed_state_history[:, i + 7], label='Gyro 2 {}'.format(names[i]))
         ax.plot(time, state_history[:, i + 6], label=' {}'.format(names[i]))
         ax.plot(time, kalman_state_history[:, i + 6], label='Kalman {}'.format(names[i]))
-        if i <= 4:
-            ax.plot(time, sensed_state_history[:, i], label='Star 1 {}'.format(names[i]))
-            ax.plot(time, sensed_state_history[:, i + 4], label='Star 2 {}'.format(names[i]))
-            ax.plot(time, sensed_state_history[:, i + 8], label='Sun 1 {}'.format(names[i]))
-            ax.plot(time, sensed_state_history[:, i + 12], label='Sun 2 {}'.format(names[i]))
-        if i > 4:
-            ax.plot(time, sensed_state_history[:, i + 12], label='Gyro 1 {}'.format(names[i]))
-            ax.plot(time, sensed_state_history[:, i + 15], label='Gyro 2 {}'.format(names[i]))
         ax.set_xlabel('Time')
         ax.set_ylabel('Value')
         ax.legend()

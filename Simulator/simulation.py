@@ -37,7 +37,7 @@ class Simulation:
         self.RTN_history = np.expand_dims(calculate_RTN(self.state), axis=0)
         
         # Sensors:
-        self.sensed_state_history = np.empty((0,22))
+        self.sensed_state_history = np.empty((0,14))
         self.kalman_state_history = np.empty((0,len(starting_state)))
         self.kalman_P = np.eye(13)
         
@@ -103,7 +103,7 @@ class Simulation:
             A = compute_A(self.state, u, self.satellite, t, self.ts)
             B = compute_B(self.state, u, self.satellite, t, self.ts)
             self.sensed_state_history = np.vstack([self.sensed_state_history, Y])
-            kalman_state, self.kalman_P = kalman_filter(self.state, u, 
+            kalman_state, self.kalman_P = kalman_filter(self.kalman_state_history[-1] if t > 0 else self.state, u, 
                                                        Y, A, B, self.ts, P=self.kalman_P)
             self.kalman_state_history = np.vstack([self.kalman_state_history, kalman_state]) 
         

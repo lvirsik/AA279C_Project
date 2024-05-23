@@ -31,7 +31,7 @@ def runSIM():
     trajectory = sim.propogate()
     # Plots
     # plot_euler(trajectory, sim)
-    plot_error_over_time(trajectory, ideal_trajectory, sim)
+    # plot_error_over_time(trajectory, ideal_trajectory, sim)
     # plot_frames_over_time(sim)
     # plot_torques_over_time(sim)
 
