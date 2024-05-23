@@ -48,6 +48,8 @@ class Sensor:
             SAT2SUN = current_pos + JUPITER2SUN
             sun_direction = normalize_vector(SAT2SUN)
             sun_direction = np.dot(Inertial2Body, sun_direction) # We need it in body frame
+
+            # sun_direction = SunSensor_hardwaremodel(self)
             noisy_sun = sun_direction + noise
             return noisy_sun
          
@@ -59,7 +61,7 @@ class Sensor:
             star_direction = normalize_vector(SAT2STAR)
             star_direction = np.dot(Inertial2Body, star_direction) # We need it in body frame
 
-
+            # sun_direction = StarTracker_hardwaremodel(self)
             noisy_star = star_direction + noise
             return noisy_star
         
@@ -98,11 +100,7 @@ class Sensor:
         theta = 0 
         I = alpha * S * np.cos(theta)
 
-        guassian_sd = self.noise
-        guassian_bias = self.bias
-        noise = np.random.normal(guassian_bias, guassian_sd, np.shape(I))
-
-        return 0
+        return I
     
     def StarTracker_hardwaremodel(self, x_ccd, y_ccd):
 
@@ -129,7 +127,12 @@ class Sensor:
         return r_hat
     
     def IMU_hardwaremodel(self):
-        return 0
+        deltaTime = 0
+        c = 0
+        A = 0
+
+        w = deltaTime * c**2 / (4*A)
+        return w
 
         
         
