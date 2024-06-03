@@ -34,7 +34,7 @@ IMU_NOISE = 0
 IMU_BIAS = 0
 
 
-
+SENSOR_SIGMA = 0.01
 
 # Magnetic Moment
 NUM_COILS = 100

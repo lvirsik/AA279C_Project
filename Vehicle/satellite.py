@@ -23,6 +23,8 @@ class Satellite:
         # Initialize Sensors (We have 2 star trackers, sun seonsrs and IMUs) True = ideal, False = not ideal
         self.starTracker1 = Sensor("Star Tracker", True, 1)
         self.starTracker2 = Sensor("Star Tracker", True, 2)
+        self.starTracker3 = Sensor("Star Tracker", True, 3)
+        self.starTracker4 = Sensor("Star Tracker", True, 4)
         self.sunSensor1 = Sensor("Sun Sensor", True, 1)
         self.sunSensor2 = Sensor("Sun Sensor", True, 1)
         self.imu1 = Sensor("Gyroscope", True, 1)
