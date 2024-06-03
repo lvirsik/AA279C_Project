@@ -6,6 +6,7 @@ from Simulator.dynamics import *
 from Simulator.stateestimation import *
 from Vehicle.satellite import Satellite
 from Vehicle.kalmanFilter import *
+from Vehicle.controller import *
 import tqdm
 
 class Simulation:
@@ -23,6 +24,7 @@ class Simulation:
         self.state_previous = copy.copy(self.state)
         self.statedot_previous = np.zeros(len(starting_state))
         self.state_history = np.empty((0,len(starting_state)))
+        self.error_history = np.empty((0,len(starting_state)))
         
         # Simulation Variables
         self.ts = simulation_timestep
@@ -40,7 +42,7 @@ class Simulation:
         self.sensed_state_history = np.empty((0,14))
         self.kalman_state_history = np.empty((0,len(starting_state)))
         self.kalman_P = np.eye(13)
-        
+        self.u_history = np.empty((0,3))        
         self.statedot = (orbital_dynamics(self.state[0:6]), rotational_dynamics(self.state, self.satellite, 0, self.ts))
 
     def propogate(self):
@@ -106,7 +108,17 @@ class Simulation:
             kalman_state, self.kalman_P = kalman_filter(self.kalman_state_history[-1] if t > 0 else self.state, u, 
                                                        Y, A, B, self.ts, P=self.kalman_P)
             self.kalman_state_history = np.vstack([self.kalman_state_history, kalman_state]) 
-        
+            
+            # Calculate Errors
+            state_error = state - IDEAL_STATE
+            self.error_history = np.vstack([self.error_history, state_error])
+            
+            # Call Controller 
+            self.K = compute_K(len(self.state), A, B)
+            U = controller(self.K, state_error)
+            self.u_history = np.vstack([self.u_history, U])
+            satellite.set_actuators(U)
+                
             # Actual Statedot
             self.statedot = (orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, t, self.ts))
 
@@ -117,12 +129,12 @@ class Simulation:
         # Check that angular velocity is legal given satellite geometry
         I_values = np.diag(self.satellite.I_principle)
 
-        L = np.linalg.norm(np.dot(self.satellite.R, L_BF(self.satellite, self.state)))
-        T = np.linalg.norm(np.dot(self.satellite.R, T_BF(self.satellite, self.state)))
-        if (L**2)/(2*T) < np.min(I_values):
-            raise ValueError('PHYSICAL LAW VIOLATED: W VECTOR IS NOT LEGAL WITH THIS GEOMETRY - UNDER Imin - value = {} Imin {}'.format((L**2)/(2*T), np.min(I_values)))
-        if (L**2)/(2*T) > np.max(I_values):
-            raise ValueError('PHYSICAL LAW VIOLATED: W VECTOR IS NOT LEGAL WITH THIS GEOMETRY - OVER Imax - value = {} Imax {}'.format((L**2)/(2*T), np.min(I_values)))
+        # L = np.linalg.norm(np.dot(self.satellite.R, L_BF(self.satellite, self.state)))
+        # T = np.linalg.norm(np.dot(self.satellite.R, T_BF(self.satellite, self.state)))
+        # if (L**2)/(2*T) < np.min(I_values):
+        #     raise ValueError('PHYSICAL LAW VIOLATED: W VECTOR IS NOT LEGAL WITH THIS GEOMETRY - UNDER Imin - value = {} Imin {}'.format((L**2)/(2*T), np.min(I_values)))
+        # if (L**2)/(2*T) > np.max(I_values):
+        #     raise ValueError('PHYSICAL LAW VIOLATED: W VECTOR IS NOT LEGAL WITH THIS GEOMETRY - OVER Imax - value = {} Imax {}'.format((L**2)/(2*T), np.min(I_values)))
         
         # TURNING OFF BECAUSE OF TORQUES
         # tol = 0.01

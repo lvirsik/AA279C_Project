@@ -43,6 +43,7 @@ class Satellite:
         self.drag_torque_history = np.zeros((1,3))
         self.torque_history = np.zeros((1,3))
         
+        self.actuator_torques = np.array([0,0,0])
     def calculate_R(self):
         value, vector = np.linalg.eig(self.I)
         R = vector
@@ -62,3 +63,6 @@ class Satellite:
     def get_magnetic_dipole(self):
         """ IN BODY FRAME"""
         return np.array([0, mu0 * NUM_COILS * SURF_IN_COIL * CURRENT, 0])
+    
+    def set_actuators(self, u):
+        self.actuator_torques = u * 20
