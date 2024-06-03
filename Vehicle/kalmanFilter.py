@@ -3,6 +3,7 @@ import math
 from Simulator.simulationConstants import *
 from Simulator.util import *
 import matplotlib.pyplot as plt
+from Vehicle.satelliteConstants import *
 from mpl_toolkits.mplot3d import Axes3D
 
 def kalman_filter(x, u, y, A, B, dt, P):
@@ -27,7 +28,7 @@ def kalman_filter(x, u, y, A, B, dt, P):
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],    
     ]) 
   
-    R = np.eye(14)
+    R = np.eye(14) #* SENSOR_SIGMA ** 2
     
     # Time Step
     x_next, P_next = predict_step(x, u, A, B, P, Q, dt)

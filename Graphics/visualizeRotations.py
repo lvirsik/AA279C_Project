@@ -72,12 +72,12 @@ def plot_kalman(state_history, kalman_state_history, sensed_state_history):
     fig1, axs1 = plt.subplots(3, 2, figsize=(12, 8))
     fig1.suptitle('Position and Velocity')
 
-    names = ["X Position",
-             "Y Position",
-             "Z Position",
-             "X Velocity",
-             "Y Velocity",
-             "Z Velocity"]
+    names = ["X Position ",
+             "Y Position ",
+             "Z Position ",
+             "X Velocity ",
+             "Y Velocity ",
+             "Z Velocity "]
     
     for i in range(6):
         ax = axs1[i // 2, i % 2]
@@ -90,24 +90,24 @@ def plot_kalman(state_history, kalman_state_history, sensed_state_history):
 
     # Create the second figure for the last 7 variables
     fig2, axs2 = plt.subplots(4, 2, figsize=(12, 10))
-    fig2.suptitle('Quaternions and Angular Velocity Vector')
+    fig2.suptitle('Quaternions and Angular Velocity Vector Error')
 
-    names = ["Q0",
-             "Q1",
-             "Q2",
-             "Q3",
-             "Wx",
-             "Wy",
-             "Wz"]
+    names = ["Q0 ",
+             "Q1 ",
+             "Q2 ",
+             "Q3 ",
+             "Wx ",
+             "Wy ",
+             "Wz "]
 
     for i in range(7):
         ax = axs2[i // 2, i % 2]
-        if i <= 3:
-            ax.plot(time, sensed_state_history[:, i], label='Star 1, 2 {}'.format(names[i]))
-            ax.plot(time, sensed_state_history[:, i + 4], label='Star 3, 4 {}'.format(names[i]))
-        if i > 3:
-            ax.plot(time, sensed_state_history[:, i + 4], label='Gyro 1 {}'.format(names[i]))
-            ax.plot(time, sensed_state_history[:, i + 7], label='Gyro 2 {}'.format(names[i]))
+        # if i <= 3:
+        #     ax.plot(time, sensed_state_history[:, i], label='Star 1, 2 {}'.format(names[i]))
+        #     ax.plot(time, sensed_state_history[:, i + 4], label='Star 3, 4 {}'.format(names[i]))
+        # if i > 3:
+        #     ax.plot(time, sensed_state_history[:, i + 4], label='Gyro 1 {}'.format(names[i]))
+        #     ax.plot(time, sensed_state_history[:, i + 7], label='Gyro 2 {}'.format(names[i]))
         ax.plot(time, state_history[:, i + 6], label=' {}'.format(names[i]))
         ax.plot(time, kalman_state_history[:, i + 6], label='Kalman {}'.format(names[i]))
         ax.set_xlabel('Time')
