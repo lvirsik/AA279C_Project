@@ -19,7 +19,7 @@ def orbital_dynamics(ECI):
     
     return statedot
 
-def rotational_dynamics(state, satellite, t, dt):
+def rotational_dynamics(state, satellite, t, dt, u=np.array([0,0,0])):
     """ Done in Body Axes"""   
     # Check for rotor
     if hasattr(satellite, 'rotor'):
@@ -46,7 +46,7 @@ def rotational_dynamics(state, satellite, t, dt):
     satellite.mag_torque_history = np.vstack((satellite.mag_torque_history, m_torque))
     satellite.srp_torque_history = np.vstack((satellite.srp_torque_history, srp_torque))
     satellite.drag_torque_history = np.vstack((satellite.drag_torque_history, drag_torque))
-    torque = gg_torque + m_torque + srp_torque + drag_torque
+    torque = gg_torque + m_torque + srp_torque + drag_torque + satellite.actuator_torques + u
     satellite.torque_history = np.vstack((satellite.torque_history, torque))
     
     # Euler Equations
@@ -106,7 +106,7 @@ def axially_symmetric_analytical_solution(t, I, state_initial):
 
 def state_space_dynamics_wrapper(state, satellite, t, dt, u):
     positional_state = orbital_dynamics(state[0:6])
-    rotational_state = rotational_dynamics(state, satellite, t, dt)
+    rotational_state = rotational_dynamics(state, satellite, t, dt, u=u)
     return np.hstack((positional_state, rotational_state))
 
 def compute_A(state, u, satellite, t, dt):
@@ -130,8 +130,8 @@ def compute_B(state, u, satellite, t, dt):
         u_minus = copy.copy(u).astype(float)
         u_plus[i] = u[i] + h
         u_minus[i] = u[i] - h
-        statedot_plus = state_space_dynamics_wrapper(state, satellite, t, dt, u)
-        statedot_minus = state_space_dynamics_wrapper(state, satellite, t, dt, u)
+        statedot_plus = state_space_dynamics_wrapper(state, satellite, t, dt, u_plus)
+        statedot_minus = state_space_dynamics_wrapper(state, satellite, t, dt, u_minus)
         jacobian[i] = (statedot_plus - statedot_minus) / (2 * h)
     return jacobian.T
     

@@ -120,3 +120,46 @@ def plot_kalman(state_history, kalman_state_history, sensed_state_history):
 
     # Show the plots
     plt.show()
+
+def plot_three_values_over_time(data: np.ndarray, satellite):
+    """
+    Plots each of the three values over time on three side-by-side graphs.
+
+    Parameters:
+    data (np.ndarray): A numpy array of shape (n, 3) containing the data to plot.
+    """
+    if data.shape[1] != 3:
+        raise ValueError("Input data must have 3 columns.")
+    
+    # Create a figure with three subplots arranged side by side
+    fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+
+    # Plot the first column
+    axs[0].plot(data[:, 0], label="Commanded")
+    axs[0].plot(satellite.x_act.U_real, label="Actual")
+    axs[0].set_title('Ux over Time')
+    axs[0].set_xlabel('Time')
+    axs[0].set_ylabel('X Torque')
+    axs[0].legend()
+
+    # Plot the second column
+    axs[1].plot(data[:, 1], label="Commanded")
+    axs[1].plot(satellite.y_act.U_real, label="Actual")
+    axs[1].set_title('Uy over Time')
+    axs[1].set_xlabel('Time')
+    axs[1].set_ylabel('Y Torque')
+    axs[1].legend()
+
+    # Plot the third column
+    axs[2].plot(data[:, 2], label="Commanded")
+    axs[2].plot(satellite.z_act.U_real, label="Actual")
+    axs[2].set_title('Uz over Time')
+    axs[2].set_xlabel('Time')
+    axs[2].set_ylabel('Z Torque')
+    axs[2].legend()
+
+    # Adjust layout to prevent overlap
+    plt.tight_layout()
+
+    # Display the plots
+    plt.show()

@@ -30,9 +30,9 @@ def runSIM():
     # Run Simulation (Rotations)
     trajectory = sim.propogate()
     # Plots
-    # plot_euler(trajectory, sim)
-    # plot_error_over_time(trajectory, ideal_trajectory, sim)
-    # plot_frames_over_time(sim)
+    plot_euler(trajectory, sim)
+    plot_error_over_time(trajectory, ideal_trajectory, sim)
+    plot_frames_over_time(sim)
     # plot_torques_over_time(sim)
 
     # plot_orbit(trajectory)
@@ -40,6 +40,7 @@ def runSIM():
     # plot_attitude_estimation(estimated_rot_trajectory, trajectory)
     # plot_attitude_estimation(estimated_vel_history, trajectory)
     #plot_attitude_estimation(estimated_stat_SE, trajectory)
-    plot_kalman(sim.state_history, sim.kalman_state_history, sim.sensed_state_history)
+    #plot_kalman(sim.state_history, sim.kalman_state_history, sim.sensed_state_history)
+    plot_three_values_over_time(sim.u_history, sim.satellite)
 
 runSIM()
