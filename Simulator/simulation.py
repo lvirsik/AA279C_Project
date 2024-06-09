@@ -113,11 +113,21 @@ class Simulation:
             state_error = state - IDEAL_STATE
             self.error_history = np.vstack([self.error_history, state_error])
             
-            # Call Controller 
+            # Determine if we are slewing or tumbling:
+            tumble_mode = False
+            if (state_error[10:13] > 0.25).any():
+                tumble_mode = True
+            
+            # Call Controller
             self.K = compute_K(len(self.state), A, B)
-            U = controller(self.K, state_error)
+            if tumble_mode: 
+                state_error[6:10] = state_error[6:10]/4 #Tell controller to not worry about error in attitude, only worry about angular velocity
+                U = controller(self.K, state_error)
+            else:
+                state_error[10:13] = state_error[10:13]/4 # Tell controller to worry about attitude error
+                U = controller(self.K, state_error)
             self.u_history = np.vstack([self.u_history, U])
-            satellite.set_actuators(U)
+            satellite.set_actuators(U, t)
                 
             # Actual Statedot
             self.statedot = (orbital_dynamics(state[0:6]), rotational_dynamics(state, satellite, t, self.ts))

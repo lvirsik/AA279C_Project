@@ -9,7 +9,7 @@ class Sensor:
         self.type = type
         self.ideal = ideal_bool # Introudce bias and noise or not
         self.bias = 0
-        self.noise = 0.01
+        self.noise = SENSOR_SIGMA
         self.star_num = star_num
 
         if (self.ideal == True):

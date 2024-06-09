@@ -14,5 +14,6 @@ def compute_K(len_state, A, B):
     return K
 
 def controller(K, error):
+    error[0:4] = error[0:4]*100
     U = np.dot(-K, error[6:13]) # U is the desired accelerations
     return U

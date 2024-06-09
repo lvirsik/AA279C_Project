@@ -6,8 +6,13 @@ I_COM_BF = np.array([[2185.6, 1.32, -0.08],
                       [-0.08, 2.17, 2183.57]])
 
 Q = np.eye(7)
+Q[0,0] = 10
+Q[1,1] = 10
+Q[2,2] = 10
+Q[3,3] = 10
 R = np.eye(3)
 
+ACTUATOR_MAX_TORQUE = 100
 
 # Rotor
 ROTOR_MASS = 20 #kg

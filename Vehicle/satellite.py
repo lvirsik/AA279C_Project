@@ -3,6 +3,7 @@ from Simulator.util import *
 from Vehicle.rotor import *
 from Vehicle.sensor import *
 from Simulator.enviornmentConstants import *
+from Vehicle.actuators import *
 import numpy as np
 
 class Satellite:
@@ -44,6 +45,9 @@ class Satellite:
         self.torque_history = np.zeros((1,3))
         
         self.actuator_torques = np.array([0,0,0])
+        self.x_act = ReactionWheel(FINAL_TIME, TIMESTEP)
+        self.y_act = ReactionWheel(FINAL_TIME, TIMESTEP)
+        self.z_act = ReactionWheel(FINAL_TIME, TIMESTEP)
     def calculate_R(self):
         value, vector = np.linalg.eig(self.I)
         R = vector
@@ -64,5 +68,5 @@ class Satellite:
         """ IN BODY FRAME"""
         return np.array([0, mu0 * NUM_COILS * SURF_IN_COIL * CURRENT, 0])
     
-    def set_actuators(self, u):
-        self.actuator_torques = u * 20
+    def set_actuators(self, u, t):
+        self.actuator_torques = np.array([self.x_act.get_torque(u[0], t), self.y_act.get_torque(u[1], t), self.z_act.get_torque(u[2], t)]) * 20
